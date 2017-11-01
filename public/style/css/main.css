@@ -1,0 +1,32 @@
+nav{
+	background-color: black;
+	color: whitesmoke;
+}
+
+body{
+	padding: 1%;
+	background-color: #e4e9ea;
+}
+
+#search_symbol{
+	width:70%;
+}
+main{
+	background-color: #fefefe;
+}
+.search_bar{
+	align-items: center;
+	padding-left: 20%;
+}
+#symbol_content {
+	margin-left: 2%;
+	margin-right: 2%;
+}
+
+#detail{
+	margin-bottom: 5%;
+
+}
+h3{
+	color:#22334f;
+}

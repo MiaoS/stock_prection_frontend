@@ -1,0 +1,18 @@
+.area{
+	clip-path:url(#clip);
+	fill:none;
+}
+
+.zoom{
+	cursor:move;
+	fill:none;
+	pointer-events:all;
+	opacity:0.5;
+}
+
+.brush{
+	fill:none;
+}
+.focus{
+	fill:none;
+}

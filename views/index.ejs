@@ -1,0 +1,46 @@
+
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<title>Home page</title>
+<!--		<script type="text/javascript" src ="library/bootstrap.min.js"></script>-->
+		<link rel = "stylesheet" type="text/css" href="/style/css/diagram.css">
+		<link rel = "stylesheet" type="text/css" href="/style/css/bootstrap.min.css">
+		<link rel = "stylesheet" type="text/css" href="/style/css/main.css">
+		  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+	</head>
+	<body>
+		<nav class="navbar navbar-bark">
+
+		</nav>
+		<main>
+			<div id="search_bar" class  ="row home_search">
+				<image style="padding-left: 45%" height = 100><caption>assume there is some words/image </caption></image>
+				<div class="search_bar">
+					<input type ='search' name='symbol' id="search_symbol" placeholder="Please enter a symbol or company name">
+					<button class="btn btn-default" id ="search-btn" onClick = "searchFunction()">Search</button>
+				</div>
+			</div>
+			<div id = "main_list" class ="container">
+			<% for (var j = 0; j < stock.length; j++){ %>
+				<div class ="col-lg-4 col-md-6 col-sm-12">
+				<h4><%= header[j]%></h4>
+				<ul>
+					<% for (var i = 0; i < stock[j].length; i++){ %>
+					<li class = "item">
+					<a href="symbol/<%= stock[0][i].symbol%>">
+					<div class="symbol-id floating-box"><%= stock[j][i].symbol %></div>
+					<div class= "symbol-name floating-box"><%= stock[j][i].name %></div>
+					<div class= "symbol-acc floating-box"><%= (stock[j][i].test_accuracy*100).toFixed(2)+"%" %></div>
+					</a></li>
+					<% } %>
+				</ul></div>
+				<% } %>
+			</div>
+		</main>
+	</body>
+	<script type="text/javascript" src ="/js/searchStock.js"></script>
+
+</html>

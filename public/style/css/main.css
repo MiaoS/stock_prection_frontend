@@ -30,3 +30,16 @@ main{
 h3{
 	color:#22334f;
 }
+
+.home_search{
+	padding-top: 5%;
+}
+.floating-box{
+	display: inline-block;
+	margin: 5px;
+	width:10%;
+}
+
+#main_list{
+	padding-top:5%;
+}

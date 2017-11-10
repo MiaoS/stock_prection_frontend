@@ -43,3 +43,15 @@ h3{
 #main_list{
 	padding-top:5%;
 }
+
+.navbar-right li{
+
+	width: 120px;
+	margin-top: 10%;
+	font-size: 1.5rem;
+	background-color: #111111
+}
+li button{
+	color: #fff;
+
+}

@@ -1,14 +1,46 @@
-var color= {
+var _color= {
 	correct: "#0abb40",
 	wrong: "#ee2222",
 	default: "#4499ff"
 };
-var selectorId = ["#diagram",'#acc1'];
+
+var _color_multi = {
+	red:["#ff8e8b","#ff4b45","#ff0800","#ba0600","#8c0500","#5d0300"],
+	green:["#17ff5f","#00d142","#008c2c","004616"],
+	default:"#4499ff"
+}
 
 
 
+var generateColor ={
+	binary: function(d){
+		if(d.predict_result ===undefined)
+			return _color.default;
+		if(d.predict_result)
+			return _color.correct;
+		return _color.wrong;
+	},
+	multiple:function(d){
+		if(d.predict === undefined && d.output === undefined)
+			return _color_multi.default;
+		if((d.predict>3 && d.output >3 )||(d.predict <4 && d.output < 4)){
+			return _color_multi.green[3-Math.abs(d.predict - d.output)];
+		}else /*if(d.predict < 4){
+			return _color_multi.red[3-d.predict];
+		}else{
+			return _color_multi.red[d.predict-4];
+		}*/
+		{
+			return _color_multi.red[Math.abs(d.predict-d.output)-1];
+		}
 
-var Diagram  = function(selector,input_data){
+	}
+}
+
+
+
+var Diagram  = function(selector,input_data, type){
+	console.log("dig"+type)
 	var svg = d3.select(selector),
 		margin = {top: 20, right: 20, bottom: 110, left: 40},
 	    margin2 = {top: 430, right: 20, bottom: 30, left: 40},
@@ -73,16 +105,17 @@ var Diagram  = function(selector,input_data){
 
 
 	var drawcircle = function(selection,d){
+		var colorFunc;
+		console.log(type);
+		if(type == "multi"){
+			colorFunc = generateColor.multiple;
+		}else{
+			colorFunc= generateColor.binary;
+		}
 		selection.attr("cx",function(d){return x(new Date(d.date));})
 							.attr("cy",function(d){return y(d.close);})
-							.attr("r",2.5)
-							.attr("fill",function(d){
-			  						if(d.predict_result ===undefined)
-										return "none";
-			  						if(d.predict_result)
-										return color.correct;
-			  						return color.wrong;
-		  							});
+							.attr("r",3)
+							.attr("fill",colorFunc);
 	}
 
 	d3.json( input_data,function(data){
@@ -98,7 +131,7 @@ var Diagram  = function(selector,input_data){
 			  .datum(data)
 			  .attr("class", "area")
 			  .attr("d", line1)
-			  .attr("stroke",color.default)
+			  .attr("stroke",_color.default)
 			  .attr("stroke-width","3").attr("fill","none");
 
 		  focus.append("g")
@@ -118,7 +151,7 @@ var Diagram  = function(selector,input_data){
 	      .datum(data)
 	      .attr("class", "area")
 	      .attr("d", line2)
-		  .attr("stroke",color.default)
+		  .attr("stroke",_color.default)
 		  .attr("stroke-width","2").attr("fill","none");
 
 		  context.append("g")
@@ -165,15 +198,14 @@ var Diagram  = function(selector,input_data){
 
 
 
-var populateFigure = function(predictDay,selector){
+var populateFigure = function(predictDay,selector,type){
 	var symbol = $("#symbol_name").html();
 
-	new Diagram(selector[0],"/predict?symbol="+symbol+"&predictDay="+predictDay);
+	new Diagram(selector[0],"/predict?symbol="+symbol+"&predictDay="+predictDay+"&type="+type, type);
 }
-
-var predictFigure1 = populateFigure(1,selectorId);
-var predictFigure2 = populateFigure(3,["#diagram2"]);
-var predictFigure2 = populateFigure(5,["#diagram3"]);
+var predictFigure1 = populateFigure(1,["#diagram"],TYPE);
+var predictFigure2 = populateFigure(3,["#diagram2"],TYPE);
+var predictFigure2 = populateFigure(5,["#diagram3"],TYPE);
 
 /*draw 3 day and 5 day diagrams*/
 // var predictFigure2 = populateFigure(3,"#diagram2");

@@ -1,3 +1,13 @@
+var TYPE = $("#TYPE").val();
+var setDefault= function(){
+	TYPE = "binary";
+	$("#TYPE").val(TYPE);
+}
+var setAdvance=function(){
+	TYPE = "multi";
+	$("#TYPE").val(TYPE);
+}
+
 var searchFunction = function(){
 	var symbol = $("#search_symbol").val();
 	$.get("/predict/search",{"symbol":symbol},function(data,status){
@@ -6,7 +16,7 @@ var searchFunction = function(){
 			var waring = $("<div></div>").text(data.message).css("class","col-lg-12 col-md-12 damage");
 			$("#search_bar").append(waring);
 		}else{
-			location.assign("/symbol/"+data.symbol);
+			location.assign("/symbol/"+data.symbol+"?type="+TYPE);
 		}
 	})
 }

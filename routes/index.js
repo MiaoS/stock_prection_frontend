@@ -5,7 +5,7 @@ var col = "predictResults";
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
-
+    var type = req.query.type||"binary";
   				res.render("index_ver1",{rankboard:[
                                   [{header:"Most Accurate Symbol For Tomorrow",controler:"day1TopAcc"},
                                   {header:"Best Accurate Symbol For Next 3 day",controler:"day3TopAcc"},
@@ -17,7 +17,8 @@ router.get('/', function(req, res, next) {
                                   [{header:"Symbol Drop Most For Tomorrow",controler:"day1TopFail"},
                                   {header:"Symbol Drop Most For Next 3 day",controler:"day3TopFail"},
                                   {header:"Symbol Drop Most For Next 5 day",controler:"day5TopFail"}]
-                                ]
+                                ],
+                                type:type
                               });
 
 });

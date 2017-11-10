@@ -26,18 +26,8 @@ var generateColor ={
 		if(d.output === undefined)
 			return _color_multi.default;
 		if((d.predict>3 && d.output >3 )||(d.predict <4 && d.output < 4)){
-			 if(d.predict == d.output){
-			 	console.log(d);
-			 	console.log(_color_multi.green[3-Math.abs(d.predict - d.output)]);
-			 }
-			//console.log(_color_multi.green[3-Math.abs(d.predict - d.output)]);
 			return _color_multi.green[3-Math.abs(d.predict - d.output)];
-		}else /*if(d.predict < 4){
-			return _color_multi.red[3-d.predict];
-		}else{
-			return _color_multi.red[d.predict-4];
-		}*/
-		{
+		}else {
 			return _color_multi.red[Math.abs(d.predict-d.output)-1];
 		}
 
@@ -87,9 +77,6 @@ var Diagram  = function(selector,input_data, type){
 	    .translateExtent([[0, 0], [width, height]])
 	    .extent([[0, 0], [width, height]])
 	    .on("zoom", zoomed);
-
-	//{"date":"2017-10-27","open":159.289993,"high":163.600006,"low":158.699997,"close":163.050003,"adjClose":163.050003,"volume":44171100,"symbol":"AAPL"}
-	//{"date":"2017-10-26","open":157.229996,"high":157.830002,"low":156.779999,"close":157.410004,"adjClose":157.410004,"volume":17000500,"symbol":"AAPL","output":"Rise","predict_result":true}
 	var line1 = d3.line()
 					.x(function(d){return x(new Date(d.date));})
 					.y(function(d){return y(d.close);});
@@ -224,9 +211,6 @@ var populateFigure = function(predictDay,selector,type){
 	new Diagram(selector[0],"/predict?symbol="+symbol+"&predictDay="+predictDay+"&type="+type, type);
 }
 var predictFigure1 = populateFigure(1,["#diagram"],TYPE);
-//var predictFigure2 = populateFigure(3,["#diagram2"],TYPE);
-//var predictFigure2 = populateFigure(5,["#diagram3"],TYPE);
+var predictFigure2 = populateFigure(3,["#diagram2"],TYPE);
+var predictFigure2 = populateFigure(5,["#diagram3"],TYPE);
 
-/*draw 3 day and 5 day diagrams*/
-// var predictFigure2 = populateFigure(3,"#diagram2");
-// var predictFigure3 = populateFigure(5,"#diagram3");

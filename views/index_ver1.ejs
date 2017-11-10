@@ -23,7 +23,7 @@
 				  <ul class = "nav navbar-nav navbar-right">
 						<li ><button class ="btn btn-lg" onclick = "setDefault()">Default</button></li>
 						<li ><button class ="btn btn-lg" onclick = "setAdvance()">Advance</button></li>
-						<input type ="text" name = "type" value = "multi" id = "TYPE" hidden>
+						<input type ="text" name = "type" value =  "<%= type%>" id = "TYPE" hidden>
 					</ul>
 				</div>
 			
@@ -31,7 +31,7 @@
 		</nav>
 		<main>
 			<div id="search_bar" class  ="row home_search">
-				<image style="padding-left: 45%" height = 100><caption>assume there is some words/image </caption></image>
+				<img style="padding-left: 40%;padding-bottom: 1%" height = 150 src = "\src\img\mlStock1.png" alt="mlStock logo">
 				<div class="search_bar">
 					<input type ='search' name='symbol' id="search_symbol" placeholder="Please enter a symbol or company name">
 					<button class="btn btn-default" id ="search-btn" onClick = "searchFunction()">Search</button>

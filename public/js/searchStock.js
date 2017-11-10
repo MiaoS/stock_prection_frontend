@@ -2,6 +2,7 @@ var TYPE = $("#TYPE").val();
 var setDefault= function(){
 	TYPE = "binary";
 	$("#TYPE").val(TYPE);
+
 }
 var setAdvance=function(){
 	TYPE = "multi";

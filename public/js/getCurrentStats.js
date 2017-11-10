@@ -18,7 +18,12 @@
 		}
 
 	});*/
+	if(TYPE == "multi"){
+		console.log(TYPE);
+		$("span.accuName").html("Test_MAE: ");
+	}
 	var getStatus= function(selectorId,tagId,type,symbol,predictDay){
+		var postfix= (predictDay+1)/2;
 		if(type == "binary"){
 			$.get("/predict/binary/accuracy",{symbol:symbol, predictDay:predictDay},function(data,status){
 				if(status==200||status=="200"||status=="success"){
@@ -32,6 +37,8 @@
 					}
 					$(tagId).addClass(label);
 					$(tagId).html(data.predict);//.addClass(label);
+					$("#profit"+postfix).html((data.profit*100).toFixed(2)+"%");
+					$("#cp"+postfix).html((data.max_rise*100).toFixed(2)+"%");
 				}
 			});
 		}else{
@@ -47,6 +54,8 @@
 					}
 					$(tagId).addClass(label);
 					$(tagId).html(data.predictResult);//.addClass(label);
+					$("#profit"+postfix).html((data.profit*100).toFixed(2)+"%");
+					$("#cp"+postfix).html((data.max_rise*100).toFixed(2)+"%");
 				}
 			});
 		}
@@ -54,10 +63,10 @@
 	// getStatus("#acc1","#pre_res_1","binary",symbol,1);
 	// getStatus("#acc2","#pre_res_2","binary",symbol,3);
 	// getStatus("#acc3","#pre_res_3","binary",symbol,5);
-	console.log("stats"+$("#TYPE").val())
-	getStatus("#acc1","#pre_res_1",$("#TYPE").value,symbol,1);
-	getStatus("#acc2","#pre_res_2",$("#TYPE").value,symbol,3);
-	getStatus("#acc3","#pre_res_3",$("#TYPE").value,symbol,5);
+	console.log("stats"+TYPE)
+	getStatus("#acc1","#pre_res_1",TYPE,symbol,1);
+	getStatus("#acc2","#pre_res_2",TYPE,symbol,3);
+	getStatus("#acc3","#pre_res_3",TYPE,symbol,5);
 /*	$.get("/predict/binary/accuracy",{symbol:symbol, predictDay:1},function(data,status){
 		if(status==200||status=="200"||status=="success"){
 			console.log(data);

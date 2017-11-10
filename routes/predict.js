@@ -33,7 +33,7 @@ router.get('/binary/accuracy', function(req, res, next) {
 	option.symbol = req.query.symbol.toUpperCase();
 	option.predict_days = parseInt(req.query.predictDay);
 	option.type= "ann_binary";
-  	mongodb.getCol(dbCol).findOne(option,{fields:{test_accuracy:1,"data":1}},function(err,item){
+  	mongodb.getCol(dbCol).findOne(option,{fields:{test_accuracy:1,"data":1,profit:1,max_rise:1,rise:1}},function(err,item){
 	  	if(err){
 	  		console.log(err);
 	  		res.render("error",{message:"data base error"+err, error:{status:500, stack:JSON.stringify(err)}});
@@ -56,7 +56,7 @@ router.get('/multi/score', function(req, res, next) {
 	option.symbol = req.query.symbol.toUpperCase();
 	option.predict_days = parseInt(req.query.predictDay);
 	option.type= "ann_multi";
-  	mongodb.getCol(dbCol).findOne(option,{fields:{test_mae:1,"data":1}},function(err,item){
+  	mongodb.getCol(dbCol).findOne(option,{fields:{test_mae:1,"data":1,profit:1,max_rise:1,rise:1}},function(err,item){
 	  	if(err){
 	  		console.log(err);
 	  		res.render("error",{message:"data base error"+err, error:{status:500, stack:JSON.stringify(err)}});

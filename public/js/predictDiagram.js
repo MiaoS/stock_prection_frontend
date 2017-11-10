@@ -6,7 +6,7 @@ var _color= {
 
 var _color_multi = {
 	red:["#ff8e8b","#ff4b45","#ff0800","#ba0600","#8c0500","#5d0300"],
-	green:["#17ff5f","#00d142","#008c2c","004616"],
+	green:["#17ff5f","#00d142","#008c2c","#004616"],
 	default:"#4499ff"
 }
 
@@ -15,15 +15,22 @@ var _color_multi = {
 var generateColor ={
 	binary: function(d){
 		if(d.predict_result ===undefined)
-			return _color.default;
+			return "none";
 		if(d.predict_result)
 			return _color.correct;
 		return _color.wrong;
 	},
 	multiple:function(d){
 		if(d.predict === undefined && d.output === undefined)
+			return "none";
+		if(d.output === undefined)
 			return _color_multi.default;
 		if((d.predict>3 && d.output >3 )||(d.predict <4 && d.output < 4)){
+			 if(d.predict == d.output){
+			 	console.log(d);
+			 	console.log(_color_multi.green[3-Math.abs(d.predict - d.output)]);
+			 }
+			//console.log(_color_multi.green[3-Math.abs(d.predict - d.output)]);
 			return _color_multi.green[3-Math.abs(d.predict - d.output)];
 		}else /*if(d.predict < 4){
 			return _color_multi.red[3-d.predict];
@@ -40,6 +47,16 @@ var generateColor ={
 
 
 var Diagram  = function(selector,input_data, type){
+
+	///tooltip
+	var div = d3.select("body").append("div")	
+    .attr("class", "tooltip")				
+    .style("opacity", 0);
+    ///end tooltip;
+
+
+
+
 	console.log("dig"+type)
 	var svg = d3.select(selector),
 		margin = {top: 20, right: 20, bottom: 110, left: 40},
@@ -116,6 +133,9 @@ var Diagram  = function(selector,input_data, type){
 							.attr("cy",function(d){return y(d.close);})
 							.attr("r",3)
 							.attr("fill",colorFunc);
+
+							//tooltip 
+
 	}
 
 	d3.json( input_data,function(data){
@@ -204,8 +224,8 @@ var populateFigure = function(predictDay,selector,type){
 	new Diagram(selector[0],"/predict?symbol="+symbol+"&predictDay="+predictDay+"&type="+type, type);
 }
 var predictFigure1 = populateFigure(1,["#diagram"],TYPE);
-var predictFigure2 = populateFigure(3,["#diagram2"],TYPE);
-var predictFigure2 = populateFigure(5,["#diagram3"],TYPE);
+//var predictFigure2 = populateFigure(3,["#diagram2"],TYPE);
+//var predictFigure2 = populateFigure(5,["#diagram3"],TYPE);
 
 /*draw 3 day and 5 day diagrams*/
 // var predictFigure2 = populateFigure(3,"#diagram2");

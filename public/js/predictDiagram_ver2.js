@@ -10,16 +10,17 @@ var _color_multi = {
 	default:"#4499ff"
 }
 var _operation_settings ={
-	"hold_50%":{color:"#008800",size:0.5},
-	"hold_100%":{color:"#00ff00",size:1},
+	"hold_50%":{color:"#778877",size:0.5},
+	"hold_100%":{color:"#556655",size:1},
 	"sell_50%":{color:"#880000",size:0.5},
 	"buy_50%":{color:"#008800",size:0.5},
 	"sell_100%":{color:"#ff0000",size:0.1},
+	"buy_100%":{color:"#ff0000",size:0.1},
 
 	"hold":{color:"#888888",size:1},
 	"wait":{color:"#888888",size:0.1},
-	"sell":{color:"#ff0000",size:0.1},
-	"buy":{color:"#000088",size:1}
+	"sell":{color:"#ff0000",size:1},
+	"buy":{color:"#229988",size:0.3}
 }
 
 
@@ -131,68 +132,51 @@ var Diagram  = function(selector,input_data, type){
 							.attr("cy",function(d){return y(d.close);})
 							.attr("r",3)
 							.attr("fill",colorFunc);
-
-							
-
 	}
 
-	var drawOperation = function(selection,d){
-		selection
-				.attr("x", function(d){return x(new Date(d.date))-2;})
-				.attr("width",10)
-				.attr("y",function(d){return y(d.close)-4/*height-2-(d.operation?_operation_settings[d.operation].size*50:0)*/;})
-				.attr("height",function(d){
-					if(!d.operation)
-						return 0;
-					return _operation_settings[d.operation].size*8;
-				
-				})
-				.attr("style",function(d){
-							//console.log(d.operation);							
-							if(d.operation)
-								return "fill:"+_operation_settings[d.operation].color;
-							return "fill:none";
-							});
+//------------------------------------------------------------------------------
+	var drawOperation2 = function(selection){
+	
+			selection.attr("stroke",function(d){
+				//console.log(d);
+				if(!d[0].operation)
+					return "none";
+			// 	if(d.data[0].operation == "buy" || d.data[0].operation == "sell" 
+			// 		||d.data[0].operation == "buy_100%" ||d.data[0].operation == "buy_50%"
+			// 		||d.data[0].operation == "sell_100%"|| d.data[0].operation == "sell_100%"){
+			// 		if(d.checkpoint.operation)
+			// 			return _operation_settings[d.checkpoint.operation].color;
+			// 		return "none";
+			// }
+				return _operation_settings[d[0].operation].color;
+
+			}).attr("stroke-width",function(d){
+				if(!d[0].operation)
+					return "none";
+				if(d[0].operation == "buy" || d[0].operation == "sell" 
+					||d[0].operation == "buy_100%" ||d[0].operation == "buy_50%"
+					||d[0].operation == "sell_100%"|| d[0].operation == "sell_100%"){
+					if(d[0].checkPoint)
+			 			return _operation_settings[d[0].checkPoint].size*16;
+			 		return 0.1;
+				}
+					
+				return _operation_settings[d[0].operation].size*16;
+			}).attr("fill","none")
+			.attr("class", "operation")
+			.datum(function(d){
+				return d;//.data;
+			})
+			.attr("d", d3.line()
+					.x(function(d){return x(new Date(d.date));})
+					.y(function(d){return y(d.close);}));
+
 	}
-
-// 	var drawOperation2 = function(selection,data){
-// 		var localline = d3.line()
-// 					.x(function(d){return x(new Date(d.date));})
-// 					.y(function(d){return y(d.close)-2;});
-
-// 					//console.log(data);
-
-// //
-// //		  context.append("path")
-// //	      .datum(data)
-// //	      .attr("class", "area")
-// //	      .attr("d", line2)
-// //		  .attr("stroke",_color.default)
-// //		  .attr("stroke-width","2").attr("fill","none");
-
-// 		selection.append("path")
-// 			.attr("stroke",function(d){
-// 				// console.log("stroke--"+JSON.stringify(data));
-// 				// if(!d[0].operation)
-// 				// 	return "none";
-// 				// return _operation_settings[d[0].operation].color;c
-// 				console.log(d);
-// 				return "#aaa";
-// 			}).attr("stroke-width",function(data){
-// 				// if(!d[0].operation)
-// 				// 	return 0;
-// 				// return _operation_settings[d[0].operation].size*6;
-// 				return 10;
-// 			}).attr("fill","none")
-// 			.attr("class", "operation")
-// 			.datum(function(d){return d;})
-// 			.attr("d", line1);
-
-// 	}
+//-------------------------------------------------------------------------------
 
 	d3.json(input_data,function(data){
 		//set up min & max of x&y
-		console.log(data[2]);
+
 		x.domain(d3.extent(data,function(d){return new Date(d.date);}));
 		y.domain([d3.min(data,function(d){return d.close*0.5;}),d3.max(data,function(d){return d.close*1.3;})]);
 		x2.domain(x.domain());
@@ -214,25 +198,25 @@ var Diagram  = function(selector,input_data, type){
 		  focus.append("g")
 			  .attr("class", "axis axis--y")
 			  .call(yAxis);
-		
+//////0------------------------------------------------------------
+		var operationData = (function(data){
+			var tempdata = [];
+			for(var i = 2; i < data.length; i++){
+				data[i-1].checkPoint = data[i-2].operation;
+				tempdata.push(
+					[data[i-1],data[i]]
+				);
+			}
+			return tempdata;
+
+		})(data);
+
+/////0------------------------------------------------------------
 		  focus.selectAll("circle")
 				.data(data).enter()
 					.append("circle").call(drawcircle);
-
-		  focus.append('g').attr('class',"operation-area").selectAll("box")//.append("g").attr("class","operation-area")
-		  		.data(data)
-		  		.enter().append("rect").attr("class","operation").call(drawOperation);
-
-
-		  // focus.append('g').attr('class',"operation-area").selectAll("op")
-		  // 		.data(data,function(d,i){
-		  // 		//console.log(i);
-		  // 		//console.log(data[i]);
-		  // 	if(i>0){
-		  // 		return [data[i-1],data[i]];
-		  // 	}
-		  // 	return [data[0],data[0]];
-		  // }).enter().call(drawOperation2);
+		  focus.append('g').attr('class',"operation-area").selectAll("op")
+		  		.data(operationData).enter().append("path").call(drawOperation2);
 		
 //---------------------------------------------------------------------------
 
@@ -269,7 +253,7 @@ var Diagram  = function(selector,input_data, type){
 	  x.domain(s.map(x2.invert, x2));
 	  focus.select(".area").attr("d", line1);
 	  focus.selectAll("circle").call(drawcircle);	
-	  focus.select(".operation-area").selectAll("rect").call(drawOperation);
+	 focus.select(".operation-area").selectAll("path").call(drawOperation2);
 	  focus.select(".axis--x").call(xAxis);
 	  svg.select(".zoom").call(zoom.transform, d3.zoomIdentity
 	      .scale(width / (s[1] - s[0]))
@@ -282,7 +266,7 @@ var Diagram  = function(selector,input_data, type){
 	  x.domain(t.rescaleX(x2).domain());
 	  focus.select(".area").attr("d", line1);
 	  focus.selectAll("circle").call(drawcircle);
-	  focus.selectAll(".operation").call(drawOperation);	
+	  focus.selectAll(".operation").call(drawOperation2);	
 	  focus.select(".axis--x").call(xAxis);
 	  context.select(".brush").call(brush.move, x.range().map(t.invertX, t));
 	}

@@ -37,7 +37,7 @@ h3{
 .floating-box{
 	display: inline-block;
 	margin: 5px;
-	width:10%;
+
 }
 
 #main_list{
@@ -48,10 +48,11 @@ h3{
 
 	width: 120px;
 	margin-top: 10%;
+	padding-top: 5%;
 	font-size: 1.5rem;
 	background-color: #111111
 }
 li button{
 	color: #fff;
-
 }
+

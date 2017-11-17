@@ -18,18 +18,20 @@ var _operation_settings ={
 	"buy_100%":{color:"#ff0000",size:0.1},
 
 	"hold":{color:"#888888",size:1},
-	"wait":{color:"#888888",size:0.1},
+	"wait":{color:"#888888",size:0.3},
 	"sell":{color:"#ff0000",size:1},
-	"buy":{color:"#229988",size:0.3}
+	"buy":{color:"#22aa77",size:1}
 }
 
 
 var generateColor ={
 	binary: function(d){
-		if(d.predict_result ===undefined)
+		if(d.predict === undefined)
 			return "none";
 		if(d.predict_result || d.predict == d.output)
 			return _color.correct;
+		if(d.predict_result ==undefined)
+			return _color.default;
 		return _color.wrong;
 	},
 	multiple:function(d){
@@ -141,13 +143,6 @@ var Diagram  = function(selector,input_data, type){
 				//console.log(d);
 				if(!d[0].operation)
 					return "none";
-			// 	if(d.data[0].operation == "buy" || d.data[0].operation == "sell" 
-			// 		||d.data[0].operation == "buy_100%" ||d.data[0].operation == "buy_50%"
-			// 		||d.data[0].operation == "sell_100%"|| d.data[0].operation == "sell_100%"){
-			// 		if(d.checkpoint.operation)
-			// 			return _operation_settings[d.checkpoint.operation].color;
-			// 		return "none";
-			// }
 				return _operation_settings[d[0].operation].color;
 
 			}).attr("stroke-width",function(d){
@@ -156,16 +151,18 @@ var Diagram  = function(selector,input_data, type){
 				if(d[0].operation == "buy" || d[0].operation == "sell" 
 					||d[0].operation == "buy_100%" ||d[0].operation == "buy_50%"
 					||d[0].operation == "sell_100%"|| d[0].operation == "sell_100%"){
-					if(d[0].checkPoint)
+					if(d[0].checkPoint && d[0].operation != "buy")
 			 			return _operation_settings[d[0].checkPoint].size*16;
-			 		return 0.1;
+			 		if(d[0].operation == "buy") return 16;
+			 		
+			 		return 0.1*16;
 				}
-					
 				return _operation_settings[d[0].operation].size*16;
+
 			}).attr("fill","none")
 			.attr("class", "operation")
 			.datum(function(d){
-				return d;//.data;
+				return d;
 			})
 			.attr("d", d3.line()
 					.x(function(d){return x(new Date(d.date));})
@@ -201,10 +198,10 @@ var Diagram  = function(selector,input_data, type){
 //////0------------------------------------------------------------
 		var operationData = (function(data){
 			var tempdata = [];
-			for(var i = 2; i < data.length; i++){
-				data[i-1].checkPoint = data[i-2].operation;
+			for(var i = data.length-3; i >= 0; i--){
+				data[i+1].checkPoint = data[i+2].operation;
 				tempdata.push(
-					[data[i-1],data[i]]
+					[data[i+1],data[i]]
 				);
 			}
 			return tempdata;

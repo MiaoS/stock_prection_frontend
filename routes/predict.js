@@ -4,7 +4,7 @@ var mongodb = require("../db/mongodb");
 
 var dbCol = "predictResults";
 var multi_result = [">+10%","+5~10%","+2~5%","+0~2%","-0~2%","-2~5%","-5~10%","<-10%"];
-
+var multi_result_2 = [">+5%","+3~5%","+1~3%","+0~1%","-0~2%","-2~5%","-5~10%","<-10%"];
 
 
 router.get("",function(req,res){

@@ -17,7 +17,7 @@ function cal_test_accuracy(stock) {
         }
         i = i + 1;
     }
-    
+    /*
     while (true) {
         
         if (!stock.data[i].predict_result) {
@@ -33,11 +33,28 @@ function cal_test_accuracy(stock) {
         stock.data[i].test_accuracy = right / (right + wrong);
         
         i = i - 1;
+    }*/
+    
+    while (i >= 0) {
+        
+        if ((undefined === stock.data[i].predict_result) || (null === stock.data[i].output)) {
+
+        } else {
+            if (stock.data[i].predict_result) {
+                right = right + 1;
+            } else {
+                wrong = wrong + 1;
+            }
+        }
+        
+        stock.data[i].test_accuracy = right / (right + wrong);
+        
+        
+        
+        i = i - 1;
     }
     
-    
-    
-    
+    return right / (right + wrong);
     
 }
 

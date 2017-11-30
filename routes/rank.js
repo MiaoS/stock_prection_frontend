@@ -43,6 +43,7 @@ router.get('/recommend', function(req, res, next) {
 		type = -1;//top drop
 	}
   var predict_method, fields,sort,match;
+  
   if(parseInt(req.query.m)==0 || req.query.m == "binary"){
     predict_method="ann_binary";
     fields = {symbol: 1, data: {$slice: ["$data", 1]}, test_accuracy: 1, type: 1, predict_days: 1};

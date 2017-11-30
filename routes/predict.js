@@ -33,6 +33,7 @@ router.get("",function(req,res){
 		option.project.test_accuracy= 1;
 	}else{
 		option.project.mae= 1;
+		option.project.test_mae=1;
 	}
 
     mongodb.getCol(dbCol)
@@ -72,23 +73,22 @@ router.get("",function(req,res){
 	    						console.log("cal:"+i);
 	    					}
 	    				}else{
-	    					if(!docs[i].data[10].mae){
-	    						ProfitCal_multi.cal_test_accuracy(docs[i]);
-	    					}
 	    					if(!docs[i].profit){
 	    						ProfitCal_multi.cal_profit(docs[i]);
 	    						ProfitCal_multi.cal_daily_profit(docs[i]);
 	    					}
 	    					if(!docs[i].rise){
-	    						ProfitCal_multi.cal_rise(docs[i]);
-	    						ProfitCal_multi.cal_max_rise(docs[i]);
+	    						docs[i].data[0].rise =ProfitCal_multi.cal_rise(docs[i]);
+	    						docs[i].data[0].max_rise =ProfitCal_multi.cal_max_rise(docs[i]);
+	    					}else{
 	    						docs[i].data[0].rise =docs[i].rise;
 	    						docs[i].data[0].max_rise = docs[i].max_rise;
 	    					}
 	    					if(!docs[i].data[0].mae){
-	    						docs[i].data[0].mae = docs[i].mae;
+	    						docs[i].data[0].test_mae = docs[i].test_mae||docs[i].mae;
 	    						console.log("cal:"+i);
 	    					}
+	    					docs[i].data[0].predictResult = multi_result[docs[i].data[0].predict];
 	    				}
     					dataonly.push(docs[i].data);
     				}

@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8">
+		<title><%= Symbol %></title>
+<!--		<script type="text/javascript" src ="library/bootstrap.min.js"></script>-->
+		<link rel = "stylesheet" type="text/css" href="/style/css/diagram.css">
+		<link rel = "stylesheet" type="text/css" href="/style/css/bootstrap.min.css">
+		<link rel = "stylesheet" type="text/css" href="/style/css/main.css">
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  		<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+	</head>
+	<body>
+		<nav class="navbar navbar-bark">
+			<div class="container-fluid">
+				    <div class="navbar-header">
+				      <a href="\?type=<%= type%>"><img src = "\src\img\mlStock1.png" alt="mlStock logo" height =100 weight=200></a>
+				    </div>
+				  
+				  <ul class = "nav navbar-nav navbar-right">
+						<li ><a href="?type=binary" class ="btn btn-lg">Default</a></li>
+						<li ><a class ="btn btn-lg" href="?type=multi">Advance</a></li>
+				  </ul>
+				
+				<input type ="text" name = "type" value = "<%= type%>" id = "TYPE" hidden>
+			</div>
+			
+		</nav>
+		<main>
+			<div id="search_bar" class  ="row">
+				<div class="search_bar">
+					<input type ='search' name='symbol' id="search_symbol" placeholder="Please enter a symbol or company name">
+					<button class="btn btn-default" id ="search-btn" onClick = "searchFunction()">Search</button>
+				</div>
+			</div>
+			<div id = "symbol_content" class ="row">
+				<div class="container">
+					<div id = "header" class="row">
+						<h1 id = "symbol_name"><%= Symbol %></h1>
+						<h4 id ="company_name"><%= Name %></h4>
+					</div>
+					
+					<div id='detail' class="row">
+						<div class='container'>
+							<div class ="row"><h3>Current Statistics</h3></div>
+							<!--<div id = "cur_stats">
+								<div class="row"><h4 id = "cur_price"><span id ="cur_proc"></span></h4></div>
+								<div class ="row"><div class="col-lg-6 col-md-6">Previous Close: <span id = "previous_close"></span></div><div class="col-lg-6 col-md-6">Open: <span id = "today_open"></span></div></div>
+								<div class ="row"><div class="col-lg-6 col-md-6">Day’s Low: <span id = "today_low"></span></div><div class="col-lg-6 col-md-6">Day’s High: <span id = "today_high"></span></div></div>	
+							</div>-->
+								
+						</div>
+						<div id="prediction">
+							<ul class="nav nav-tabs">
+								<li class="active">
+								<a data-toggle="tab" href="#predict_one_day">
+									<div>Expect in 1 day: <span class="label" id = "pre_res_1">Rise</span></div>
+									<div><span class = "accuName">Accuracy: </span><span id="acc1">75.581%</span></div>
+									<div>Profit: <span id="profit1"></span></div>
+									<div>Changes percentage: <span id = "cp1"></span></div>
+									<div>Maximum Changes %: <span id = "cpm1"></span></div>
+									<div>Operate Suggestion: <span id = "op1"></span></div>
+								</a></li>
+								<li><a data-toggle="tab" href="#predict_three_day">
+									<div>Expect in 3 day: <span class="label" id = "pre_res_3"></span></div>
+									<div><span class = "accuName">Accuracy: </span><span id="acc3">75.581%</span></div>
+									<div>Profit: <span id="profit3"></span></div>
+									<div>Changes percentage: <span id = "cp3"></span></div>
+									<div>Maximum Changes %: <span id = "cpm3"></span></div>
+									<div>Operate Suggestion: <span id = "op3"></span></div>
+									</a></li>
+								<li><a data-toggle="tab" href="#predict_five_day">
+									<div>Expect in 5 day: <span class="label" id = "pre_res_5"></span></div>
+									<div><span class = "accuName">Accuracy: </span><span id="acc5">75.581%</span></div>
+									<div>Profit: <span id="profit5"></span></div>
+									<div>Changes percentage: <span id = "cp5"></span></div>
+									<div>Maximum Changes %: <span id = "cpm5"></span></div>
+									<div>Operate Suggestion: <span id = "op5"></span></div>
+									</a></li> 
+
+							</ul>
+							
+							<div class="tab-content">
+								<div  class="tab-pane fade in active"  id="predict_one_day">
+
+									<svg id='diagram' class = "show-area" width="960" height="500" ></svg>
+									<div class ="diagram-controler">
+										<div class = "box">
+											<label class="switch">
+												<input type ="checkbox" name = "close_prices" checked>
+												<span class="slider"></span>
+											</label>
+											<span>Close Prices</span>
+										</div> 
+
+	 									<div class = "box">
+											<label class="switch">
+												<input type ="checkbox" name = "predictResult"  checked>
+												<span class="slider"></span>
+											</label>
+											<span>Predict vs Output</span>
+										</div> 
+										
+										<div class = "box">
+											<label class="switch">
+												<input type ="checkbox" name = "profit" checked>
+												<span class="slider"></span>
+											</label>
+											<span>Profit*</span>
+										</div> 
+									</div>
+									<div class = "model-selector line">
+										<figure id='ann-sampler' class = "sampler col-md-3">
+											<svg  width = "160" height ="90"></svg>
+											<figcaption>ANN Model</figcaption>
+										</figure>
+										<figure id='rf-sampler' class = "sampler col-md-3">
+											<svg  width = "160" height ="90"></svg>
+											<figcaption>Random Forest Model</figcaption>
+										</figure>
+
+									</div>
+								</div>
+
+								<div  class="tab-pane fade"  id="predict_three_day">
+
+									<svg id='diagram' class = "show-area" width="960" height="500" ></svg>
+									<div class ="diagram-controler">
+										<div class = "box">
+											<label class="switch">
+												<input type ="checkbox" name = "close_prices" checked>
+												<span class="slider"></span>
+											</label>
+											<span>Close Prices</span>
+										</div> 
+
+	 									<div class = "box">
+											<label class="switch">
+												<input type ="checkbox" name = "predictResult"  checked>
+												<span class="slider"></span>
+											</label>
+											<span>Predict vs Output</span>
+										</div> 
+										
+										<div class = "box">
+											<label class="switch">
+												<input type ="checkbox" name = "profit" checked>
+												<span class="slider"></span>
+											</label>
+											<span>Profit*</span>
+										</div> 
+									</div>
+									<div class = "model-selector line">
+										<figure id='ann-sampler' class = "sampler col-md-3">
+											<svg  width = "160" height ="90"></svg>
+											<figcaption>ANN Model</figcaption>
+										</figure>
+										<figure id='rf-sampler' class = "sampler col-md-3">
+											<svg  width = "160" height ="90"></svg>
+											<figcaption>Random Forest Model</figcaption>
+										</figure>
+									</div>
+								</div>
+
+
+								<div  class="tab-pane fade"  id="predict_five_day">
+
+									<svg id='diagram' class = "show-area" width="960" height="500" ></svg>
+									<div class ="diagram-controler">
+										<div class = "box">
+											<label class="switch">
+												<input type ="checkbox" name = "close_prices" checked>
+												<span class="slider"></span>
+											</label>
+											<span>Close Prices</span>
+										</div> 
+
+	 									<div class = "box">
+											<label class="switch">
+												<input type ="checkbox" name = "predictResult"  checked>
+												<span class="slider"></span>
+											</label>
+											<span>Predict vs Output</span>
+										</div> 
+										
+										<div class = "box">
+											<label class="switch">
+												<input type ="checkbox" name = "profit" checked>
+												<span class="slider"></span>
+											</label>
+											<span>Profit*</span>
+										</div> 
+									</div>
+									<div class = "model-selector line">
+										<figure id='ann-sampler' class = "sampler col-md-3">
+											<svg  width = "160" height ="90"></svg>
+											<figcaption>ANN Model</figcaption>
+										</figure>
+										<figure id='rf-sampler' class = "sampler col-md-3">
+											<svg  width = "160" height ="90"></svg>
+											<figcaption>Random Forest Model</figcaption>
+										</figure>
+									</div>
+								</div>
+
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</main>
+		<footer>
+			*Profit Calculation Algorithm: <br>
+				Default: a. If the predict output is rise, the stock will be bought at open price the next day; b. if predict output is fail, the stock will be sold at open price the next day.<br>
+				Advance: c. If the prediction shows that the stock will rise more than 2%, all the money will be invested in this stock; d. if the prediction shows that the stock will rise no more than 2%. half of the money will be invested in this stock; c. if the prediction show that the stock will fail, no investment will be placed in this stock. 
+		</footer>
+	</body>
+	<script type="text/javascript" src ="/js/searchStock.js"></script>
+	<script type="text/javascript" src ="/library/d3.min.js" defer></script>
+	<script type="text/javascript" src ="/js/predictDiagram_ver3.js" defer></script>
+	<!-- <script type = "text/javascript" src ="/js/getCurrentStats.js" async></script> -->
+</html>

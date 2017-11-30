@@ -242,3 +242,10 @@ function cal_rise(stock) {
         i = i + 1;
     }
 }
+
+module.exports = {
+    cal_profit:cal_profit,
+    cal_daily_profit:cal_daily_profit,
+    cal_rise:cal_rise,
+    cal_max_rise:cal_max_rise
+}

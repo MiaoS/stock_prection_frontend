@@ -156,8 +156,8 @@ Diagram.prototype.drawMae = function(model) {
 	if(model){
 		figure = this.samplerArea.select("#"+model+"-sampler").select("svg").append("g");
 		curdata = this[model+"Data"];
-		x = d3.scaleTime().rang([0,this.diagramArea.select(".model-selector").select("."+model+"-sampler").select("svg").attr("width")]);
-		y = d3.scaleLinear().rang([this.diagramArea.select(".model-selector").select("."+model+"-sampler").select("svg").attr("height"),0]);
+		x = d3.scaleTime().range([0,this.diagramArea.select(".model-selector").select("#"+model+"-sampler").select("svg").attr("width")]);
+		y = d3.scaleLinear().range([this.diagramArea.select(".model-selector").select("#"+model+"-sampler").select("svg").attr("height"),0]);
 	}else{
 		figure = this.mainArea.append("g").attr("class","mae-layer");
 		curdata = this.data;
@@ -165,28 +165,26 @@ Diagram.prototype.drawMae = function(model) {
 		y = this.accY;
 	}
 	x.domain(d3.extent(curdata,function(d){return new Date(d.date);}));
-	y.domain([-1,8]);
+	y.domain([0,7]);
 
 	this.predictMultiLine = d3.line()
 					.x(function(d){return x(new Date(d.date));})
-					.y(function(d){return y(d.predict);});
+					.y(function(d){return y(d.predict||0);});
 
 	this.outputMultiLine = d3.line()
 					.x(function(d){return x(new Date(d.date));})
-					.y(function(d){return y(d.output);});
+					.y(function(d){return y(d.output||0);});
 	// draw the line
-	var maeArea = figure.datum(curdata); // for jquery to troggle this class 
-
-	maeArea.append("path").attr("class"," mae-predict-line")
-					.attr("stroke",_profitColor[1]).attr("stroke-width",3).attr("d", predictMultiLine);
-	maeArea.append("path").attr("class"," mae-output-line")
-					.attr("stroke",_profitColor[2]).attr("stroke-width",3).attr("d", outputMultiLine);
+	figure.datum(curdata).append("path").attr("class"," mae-predict-line")
+					.attr("stroke",_predictResult[1]).attr("stroke-width",3).attr("d", this.predictMultiLine);
+	figure.datum(curdata).append("path").attr("class"," mae-output-line")
+					.attr("stroke",_predictResult[4]).attr("stroke-width",3).attr("d", this.outputMultiLine);
 
 	//draw  Y axis for accuracy
 	if(!model){
 		this.accYAxis = d3.axisRight(y);// for jquery to troggle this class 
 		this.mainArea.append("g")
-			  .attr("class", "axis axis--y mae-layer").attr("transform", "translate(" + (this.width+this.margin.right) + ",0)")
+			  .attr("class", "axis axis--y mae-layer").attr("transform", "translate(" + this.width + ",0)")
 			  .call(this.accYAxis);
 	}
 
@@ -364,6 +362,29 @@ Diagram.prototype.populateData = function() {
 			}
 
 			$("#cp"+temp.predictDay).html((temp.data[0].rise*100).toFixed(2)+"%");
+		}else{
+		
+			$("span.accuName").html("Test_MAE: ");
+			$("#acc"+temp.predictDay).html((temp.data[0].test_mae).toFixed(2));
+			var label;
+			if(data.predict<4){
+				label = "label-success";
+			}else{
+				label = "label-danger";
+			}
+			$("#pre_res_"+temp.predictDay).addClass(label);
+			$("#pre_res_"+temp.predictDay).html(temp.data[0].predictResult);//.addClass(label);
+			$("#profit"+temp.predictDay).html((temp.data[0].profit*100).toFixed(2)+"%");
+			$("#cp"+temp.predictDay).html((temp.data[0].rise*100).toFixed(2)+"%");
+			$("#cpm"+temp.predictDay).html((temp.data[0].max_rise*100).toFixed(2)+"%");
+
+			if(temp.data[0].predict <=2 ){
+				$("#op"+temp.predictDay).html("All In");
+			}else if(temp.data[0].predict <=3){
+				$("#op"+temp.predictDay).html("50% In");
+			}else{
+				$("#op"+temp.predictDay).html("All Out");
+			}
 		}
 
 

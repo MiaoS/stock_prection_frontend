@@ -1,6 +1,7 @@
 .area{
 	clip-path:url(#clip);
 	fill:none;
+	color:black;
 }
 
 .zoom{

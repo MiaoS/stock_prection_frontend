@@ -19,7 +19,7 @@ router.get("",function(req,res){
 	option.type = req.query.type;
 	if(option.type)
 	option.project = {
-		data: {$slice: ["$data", 750]}, 
+		data: {$slice: ["$data", 500]}, 
 		model: 1, 
 		predict_days: 1,
 		test_start_date:1,
@@ -56,6 +56,7 @@ router.get("",function(req,res){
     					if(option.type=="binary"){
 	    					if(!docs[i].data[10].test_accuracy){
 	    						ProfitCal_binary.cal_test_accuracy(docs[i]);
+								console.log(docs[i]);
 	    					}
 	    					if(!docs[i].profit){
 	    						ProfitCal_binary.cal_profit(docs[i]);
@@ -84,10 +85,10 @@ router.get("",function(req,res){
 	    						docs[i].data[0].rise =docs[i].rise;
 	    						docs[i].data[0].max_rise = docs[i].max_rise;
 	    					}
-	    					if(!docs[i].data[0].mae){
-	    						docs[i].data[0].test_mae = docs[i].test_mae||docs[i].mae;
-	    						console.log("cal:"+i);
-	    					}
+	    					
+	    					docs[i].data[0].test_mae = docs[i].test_mae||docs[i].mae;
+	    					console.log("cal:"+i);
+	    					
 	    					docs[i].data[0].predictResult = multi_result[docs[i].data[0].predict];
 	    				}
     					dataonly.push(docs[i].data);

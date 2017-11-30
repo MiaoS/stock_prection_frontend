@@ -7,11 +7,11 @@ router.get('/bestAcc', function(req, res, next) {
 	var predict_days = parseInt(req.query.d); //{d:1/3/5}
   var predict_method, fields, sort;
   if(parseInt(req.query.m)==0 || req.query.m == "binary"){
-    predict_method="ann_binary";
+    predict_method="binary";
     fields = {"symbol":1,"test_accuracy":1};
     sort = [["test_accuracy","descending"]]
   }else{
-    predict_method="ann_multi";
+    predict_method="multi";
     fields ={"symbol":1,"test_mae":1};
     sort = [["test_mae","ascending"]];
   }
@@ -45,12 +45,12 @@ router.get('/recommend', function(req, res, next) {
   var predict_method, fields,sort,match;
   
   if(parseInt(req.query.m)==0 || req.query.m == "binary"){
-    predict_method="ann_binary";
+    predict_method="binary";
     fields = {symbol: 1, data: {$slice: ["$data", 1]}, test_accuracy: 1, type: 1, predict_days: 1};
     sort = {test_accuracy: -1};
     match = {type: predict_method, predict_days: predict_days,"data.predict":(type==1?"Rise":"Fall")};
   }else{
-    predict_method="ann_multi";
+    predict_method="multi";
     fields ={symbol: 1, data: {$slice: ["$data", 1]}, test_mae: 1, type: 1, predict_days: 1};
     sort = {"data.predict": type, test_mae: 1};
     match = {type: predict_method, predict_days: predict_days};
@@ -81,11 +81,11 @@ router.get("/bestProfit",function(req,res){
   var predict_days = parseInt(req.query.d);
   var predict_method;
   if(parseInt(req.query.m)==0 || req.query.m == "binary"){
-    predict_method="ann_binary";
+    predict_method="binary";
     fields = {"symbol":1,"profit":1};
   
   }else{
-    predict_method="ann_multi";
+    predict_method="multi";
     fields ={"symbol":1,"profit":1};
    
   }

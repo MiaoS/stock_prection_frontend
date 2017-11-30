@@ -9,7 +9,7 @@ var Diagram = function(selector,predict,symbol){
 	//main figure svg
 	this.svg = this.diagramArea.select(".show-area");
 	//
-	this.margin = {top: 20, right: 40, bottom: 110, left: 40};
+	this.margin = {top: 40, right: 60, bottom: 110, left: 60};
 	this.margin2 ={top: 430, right: 20, bottom: 30, left: 20};
 	this.width =this.svg.attr("width") - this.margin.left - this.margin.right;
 	this.height = this.svg.attr("height") - this.margin.top - this.margin.bottom;
@@ -20,6 +20,7 @@ var Diagram = function(selector,predict,symbol){
 
 	this.zoomArea = this.svg.append("g").attr("class", "zoom")
 								 .attr("transform", "translate(" + this.margin2.left + "," + this.margin2.top + ")");;
+	
 	this.contextArea = this.svg.append("g")
 								.attr("class", "context")
 								.attr("transform", "translate(" + this.margin2.left + "," + this.margin2.top + ")");
@@ -29,8 +30,10 @@ var Diagram = function(selector,predict,symbol){
 
 	this.mainX =d3.scaleTime().range([0, this.svg.attr("width") - this.margin.left - this.margin.right]);
 	this.mainY =d3.scaleLinear().range([this.svg.attr("height") - this.margin.top - this.margin.bottom, 0]);
+	
 	this.zoomY =d3.scaleLinear().range([this.svg.attr("height") - this.margin2.top - this.margin2.bottom, 0]);
 	this.zoomX =d3.scaleTime().range([0, this.svg.attr("width") - this.margin2.left - this.margin2.right]);
+	
 	this.accY = d3.scaleLinear().range([this.svg.attr("height") - this.margin.top - this.margin.bottom, 0]);
 	this.profitY = d3.scaleLinear().range([this.svg.attr("height") - this.margin.top - this.margin.bottom, 0]);
 
@@ -54,6 +57,7 @@ var Diagram = function(selector,predict,symbol){
 	this.profitLine;
 	this.dataPath = "/predict?symbol="+symbol+"&predictDay="+predict+"&type="+TYPE;
 	this.predictDay=predict;
+	this.iconArea;
 
 }
 
@@ -72,7 +76,7 @@ Diagram.prototype.drawClosePrice = function() {
 	//draw the big diagram
 	this.mainArea.append("path")
 		  .datum(temp.data)
-		  .attr("class", "area")
+		  .attr("class", "area close-price-layer")
 		  .attr("d", temp.closeLine)
 		  .attr("stroke",_closeLineColor)
 		  .attr("stroke-width","3").attr("fill","none");
@@ -85,6 +89,15 @@ Diagram.prototype.drawClosePrice = function() {
 	this.mainArea.append("g")
 		  .attr("class", "axis axis--y price-close-y")
 		  .call(temp.yAxis);
+	
+	this.svg.append("text")
+				.attr("transform", "rotate(-90)")
+				.attr("x", -110 )
+				.attr("y", 20)
+	 			.attr("font-size", ".8em")
+				.style("text-anchor", "start")
+				.attr("class","close-price-layer")
+				.text("Close Price");
 
 };
 
@@ -121,6 +134,15 @@ Diagram.prototype.drawAccuracy = function(model) {
 			  .attr("class", "axis axis--y accuracy-layer acc-y").attr("transform", "translate(" + this.width + ",0)")
 			  .call(this.accYAxis);
 		this.accuracyLine = accuracyLine;
+		
+		this.svg.append("text")
+				.attr("transform", "rotate(-90)")
+				.attr("x", -110 )
+				.attr("y", this.svg.attr("width")-this.margin2.right)
+	 			.attr("font-size", ".8em")
+				.style("text-anchor", "start")
+				.attr("class","accuracy-layer")
+				.text("Test Acc");
 	}
 
 };
@@ -186,6 +208,14 @@ Diagram.prototype.drawMae = function(model) {
 		this.mainArea.append("g")
 			  .attr("class", "axis axis--y mae-layer").attr("transform", "translate(" + this.width + ",0)")
 			  .call(this.accYAxis);
+		this.svg.append("text")
+			.attr("transform", "rotate(-90)")
+			.attr("x", -110 )
+			.attr("y", this.svg.attr("width")-this.margin2.right)
+			.attr("font-size", ".8em")
+			.style("text-anchor", "start")
+			.attr("class","accuracy-layer")
+			.text("Mae");
 	}
 
 
@@ -207,12 +237,13 @@ Diagram.prototype.drawZoom = function() {
 	var svg = this.svg;
 	var mainX = this.mainX;
 	var zoomX = this.zoomX;
+	var zoomY = this.zoomY;
 	var contextArea = this.contextArea;
 	var width = this.width;
 
 	var zoomLine = d3.line()
-						.x(function(d){return this.zoomX(new Date(d.date));})
-						.y(function(d){return this.zoomY(d.close);});
+						.x(function(d){return zoomX(new Date(d.date));})
+						.y(function(d){return zoomY(d.close);});
 
 	this.svg.append("defs")
 				.append("clipPath")
@@ -222,7 +253,7 @@ Diagram.prototype.drawZoom = function() {
 		    		.attr("height", this.height);
 
 	var brush = d3.brushX()
-	    .extent([[0, 0], [this.width, this.svg.attr("height") - this.margin2.top - this.margin2.bottom]])
+	    .extent([[0, 0], [this.svg.attr("width") - this.margin2.left - this.margin2.right, this.svg.attr("height") - this.margin2.top - this.margin2.bottom]])
 	    .on("brush end", brushed);
 
 	var zoom = d3.zoom()
@@ -235,7 +266,7 @@ Diagram.prototype.drawZoom = function() {
 	this.contextArea.append("path")
       .datum(this.data)
       .attr("class", "area")
-      .attr("d", this.zoomLine)
+      .attr("d", zoomLine)
 	  .attr("stroke",_closeLineColor)
 	  .attr("stroke-width","2").attr("fill","none");
 
@@ -321,10 +352,14 @@ Diagram.prototype.populateData = function() {
     		}
     	}else{
 	    	temp.annData=data[0];	    	
-	    	//temp.rfData = data[1];
-	    	//if(temp.annData[0].mae <= temp.rfData[0].mae){
+	    	temp.rfData = data[1];
+	    	if(temp.annData[0].mae <= temp.rfData[0].mae){
 	    		temp.data = temp.annData;
-	    	//}
+				temp.samplerArea.select("#ann-sampler").classed("selected",true);
+	    	}else{
+				temp.data = temp.rfData;
+				temp.samplerArea.select("#rf-sampler").classed("selected",true);
+			}
     	}
     	if(TYPE=="binary"){
     		temp.drawAccuracy("svm");
@@ -335,7 +370,7 @@ Diagram.prototype.populateData = function() {
     	}else{
 
     		temp.drawMae("ann");
-    		//temp.drawMae("rf");
+    		temp.drawMae("rf");
     		temp.drawMae();
     	}
 	    temp.drawClosePrice();

@@ -13,7 +13,11 @@ router.get('/:symbol', function(req, res, next) {
   		res.json(err);
   	}else{
       item.type =req.query.type||"binary";
-  		res.render("stock",item);
+      if(item.type=="binary"){
+  		  res.render("stock",item);
+      }else{
+        res.render("stock_multi",item);
+      }
 
   	}
   	

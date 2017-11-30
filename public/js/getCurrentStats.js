@@ -38,7 +38,14 @@
 					$(tagId).addClass(label);
 					$(tagId).html(data.predict);//.addClass(label);
 					$("#profit"+postfix).html((data.profit*100).toFixed(2)+"%");
-					$("#cp"+postfix).html((data.max_rise*100).toFixed(2)+"%");
+					$("#cpm"+postfix).html((data.max_rise*100).toFixed(2)+"%");
+					if(data.predict == "Rise"){
+						$("#op"+postfix).html("Buy");
+					}else{
+						$("#op"+postfix).html("Sell");
+					}
+
+					$("#cp"+postfix).html((data.rise*100).toFixed(2)+"%");
 				}
 			});
 		}else{
@@ -55,7 +62,16 @@
 					$(tagId).addClass(label);
 					$(tagId).html(data.predictResult);//.addClass(label);
 					$("#profit"+postfix).html((data.profit*100).toFixed(2)+"%");
-					$("#cp"+postfix).html((data.max_rise*100).toFixed(2)+"%");
+					$("#cp"+postfix).html((data.rise*100).toFixed(2)+"%");
+					$("#cpm"+postfix).html((data.max_rise*100).toFixed(2)+"%");
+
+					if(data.predict <=2 ){
+						$("#op"+postfix).html("All In");
+					}else if(data.predict <=3){
+						$("#op"+postfix).html("50% In");
+					}else{
+						$("#op"+postfix).html("All Out");
+					}
 				}
 			});
 		}

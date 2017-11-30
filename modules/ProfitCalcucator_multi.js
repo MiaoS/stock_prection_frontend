@@ -2,6 +2,11 @@ var COST = 1000;
 var FIRST_50 = 0;
 var SECOND_50 = 1;
 
+
+var isSampleDate = function(d1,d2){
+    return (new Date(d1)).getTime() == (new Date(d2)).getTime();
+}
+
 function cal_daily_profit(stock) {
     var i = stock.predict_days,
         j = 0,
@@ -12,7 +17,7 @@ function cal_daily_profit(stock) {
     
     while (true) {
         
-        if (stock.data[i].date === stock.test_start_date) {
+        if (isSampleDate(stock.data[i].date,stock.test_start_date)) {
             break;
         }
         i = i + 1;
@@ -111,7 +116,7 @@ function cal_profit(stock) {
     
     while (true) {
         
-        if (stock.data[i].date === stock.test_start_date) {
+        if (isSampleDate(stock.data[i].date,stock.test_start_date)) {
             break;
         }
         i = i + 1;
@@ -218,7 +223,7 @@ function cal_max_rise(stock) {
     
     while (true) {
         
-        if (stock.data[i].date === stock.test_start_date) {
+        if (isSampleDate(stock.data[i].date,stock.test_start_date)) {
             return (max_price - stock.data[i - 1].open) / stock.data[i - 1].open;
         }
         
@@ -234,7 +239,7 @@ function cal_rise(stock) {
     
     while (true) {
         
-        if (stock.data[i].date === stock.test_start_date) {
+        if (isSampleDate(stock.data[i].date,stock.test_start_date)) {
             return (stock.data[0].close - stock.data[i - 1].open) / stock.data[i - 1].open;
         }
         

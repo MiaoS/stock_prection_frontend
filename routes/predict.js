@@ -45,7 +45,7 @@ router.get("",function(req,res){
 		            {$limit: 5}
   				],
     			function(err,docs){
-    			//console.log(docs);
+    			console.log(docs.length);
     			if(err){
     				var emptydoc = [];
     				res.json({status:500,message:err});

@@ -53,6 +53,7 @@ var Diagram = function(selector,predict,symbol){
 	this.outputMultiLine; // for multi-label
 	this.profitLine;
 	this.dataPath = "/predict?symbol="+symbol+"&predictDay="+predict+"&type="+TYPE;
+	this.predictDay=predict;
 
 }
 
@@ -111,7 +112,7 @@ Diagram.prototype.drawAccuracy = function(model) {
 
 	// draw the line
 	figure.append("path").attr("class"," accuracy-line")
-					.datum(curdata).attr("stroke","#ee9999").attr("stroke-width",3).attr("d", accuracyLine);
+					.datum(curdata).attr("stroke","#ee9999").attr("stroke-width",3).attr("d", accuracyLine).attr("fill","none");
 
 	//draw  Y axis for accuracy
 	if(!model){
@@ -343,6 +344,28 @@ Diagram.prototype.populateData = function() {
 	    temp.drawProfit()
 		temp.drawZoom();
 		temp.selectionOperaton();
+		/////---------
+		if(TYPE == "binary"){
+			$("#acc"+temp.predictDay).html((temp.data[0].test_accuracy*100).toFixed(2)+"%");
+			var label;
+			if(temp.data[0].predict=="Rise"){
+				label = "label-success";
+			}else{
+				label = "label-danger";
+			}
+			$("#pre_res_"+temp.predictDay).addClass(label);
+			$("#pre_res_"+temp.predictDay).html(temp.data[0].predict);//.addClass(label);
+			$("#profit"+temp.predictDay).html((temp.data[0].profit*100).toFixed(2)+"%");
+			$("#cpm"+temp.predictDay).html((temp.data[0].max_rise*100).toFixed(2)+"%");
+			if(temp.data[0].predict == "Rise"){
+				$("#op"+temp.predictDay).html("Buy");
+			}else{
+				$("#op"+temp.predictDay).html("Sell");
+			}
+
+			$("#cp"+temp.predictDay).html((temp.data[0].rise*100).toFixed(2)+"%");
+		}
+
 
     });
 	return this;
@@ -410,8 +433,8 @@ var populateFigure = function(predictDay,selector){
 
 }
 var predictFigure1 = populateFigure(1,"#predict_one_day");
-//var predictFigure2 = populateFigure(3,"#diagram2");
-//var predictFigure2 = populateFigure(5,"#diagram3");
+var predictFigure2 = populateFigure(3,"#predict_three_day");
+var predictFigure2 = populateFigure(5,"#predict_five_day");
 
 $("input[name='predictResult']").on("change",function(){
 	if(TYPE == "binary"){

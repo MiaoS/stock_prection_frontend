@@ -17,11 +17,28 @@ router.get("",function(req,res){
 	option.predict_days = parseInt(req.query.predictDay);
 	
 	option.type = req.query.type;
+	if(option.type)
+	option.project = {
+		data: {$slice: ["$data", 750]}, 
+		model: 1, 
+		predict_days: 1,
+		test_start_date:1,
+		type:1,
+		symbol:1,
+		rise:1,
+		max_rise:1,
+		profit:1
+	};
+	if(option.type=='binary'){
+		option.project.test_accuracy= 1;
+	}else{
+		option.project.mae= 1;
+	}
 
     mongodb.getCol(dbCol)
     		.aggregate(
     			[
-		            {$project: {data: {$slice: ["$data", 750]}, test_accuracy: 1, model: 1, predict_days: 1,test_start_date:1,type:1,symbol:1,rise:1,max_rise:1,profit:1}},
+		            {$project: option.project},
 		            {$match: {type: option.type, predict_days: option.predict_days,symbol:option.symbol}},
 		            {$sort: {model: -1}}, //SVM,ann, dt, rf
 		            {$limit: 5}
@@ -35,25 +52,47 @@ router.get("",function(req,res){
     				var dataonly = [];
 
     				for (var i = docs.length - 1; i >= 0; i--) {
-    					
-    					if(!docs[i].data[10].test_accuracy){
-    						ProfitCal_binary.cal_test_accuracy(docs[i]);
-    					}
-    					if(!docs[i].profit){
-    						ProfitCal_binary.cal_profit(docs[i]);
-    						ProfitCal_binary.cal_daily_profit(docs[i]);
-    					}
-    					if(!docs[i].rise){
-    						ProfitCal_binary.cal_rise(docs[i]);
-    						ProfitCal_binary.cal_max_rise(docs[i]);
-    					}
-    					if(!docs[i].data[0].test_accuracy){
-    						docs[i].data[0].test_accuracy = docs[i].test_accuracy;
-    						console.log("cal:"+i);
-    					}
+    					if(option.type=="binary"){
+	    					if(!docs[i].data[10].test_accuracy){
+	    						ProfitCal_binary.cal_test_accuracy(docs[i]);
+	    					}
+	    					if(!docs[i].profit){
+	    						ProfitCal_binary.cal_profit(docs[i]);
+	    						ProfitCal_binary.cal_daily_profit(docs[i]);
+	    					}
+	    					if(!docs[i].rise){
+	    						docs[i].data[0].rise =ProfitCal_binary.cal_rise(docs[i]);
+	    						docs[i].data[0].max_rise = ProfitCal_binary.cal_max_rise(docs[i]);
+	    					}else{
+	    						docs[i].data[0].rise =docs[i].rise;
+	    						docs[i].data[0].max_rise = docs[i].max_rise;
+	    					}
+	    					if(!docs[i].data[0].test_accuracy){
+	    						docs[i].data[0].test_accuracy = docs[i].test_accuracy;
+	    						console.log("cal:"+i);
+	    					}
+	    				}else{
+	    					if(!docs[i].data[10].mae){
+	    						ProfitCal_multi.cal_test_accuracy(docs[i]);
+	    					}
+	    					if(!docs[i].profit){
+	    						ProfitCal_multi.cal_profit(docs[i]);
+	    						ProfitCal_multi.cal_daily_profit(docs[i]);
+	    					}
+	    					if(!docs[i].rise){
+	    						ProfitCal_multi.cal_rise(docs[i]);
+	    						ProfitCal_multi.cal_max_rise(docs[i]);
+	    						docs[i].data[0].rise =docs[i].rise;
+	    						docs[i].data[0].max_rise = docs[i].max_rise;
+	    					}
+	    					if(!docs[i].data[0].mae){
+	    						docs[i].data[0].mae = docs[i].mae;
+	    						console.log("cal:"+i);
+	    					}
+	    				}
     					dataonly.push(docs[i].data);
     				}
-    				console.log(dataonly[0]);
+    				console.log(dataonly[0][0]);
     				res.json(dataonly);  				
     			}
     		});

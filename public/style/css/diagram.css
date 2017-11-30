@@ -22,6 +22,21 @@
 .focus{
 	fill:none;
 }
+
+.test-data-area{
+  opacity: 0.4;
+}
+
+
+.sampler{
+  opacity: 0.6;
+}
+
+.selected{
+  opacity: 1;
+  border-color: #bfd7ea;
+  border-width: 2px;
+}
 .diagram-controler {
 	float: right;
 	position: static;

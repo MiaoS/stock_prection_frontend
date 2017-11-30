@@ -3,7 +3,7 @@
 <html lang="en">
 	<head>
 		<meta charset="UTF-8">
-		<title>Home page</title>
+		<title>mlStock</title>
 <!--		<script type="text/javascript" src ="library/bootstrap.min.js"></script>-->
 		<link rel = "stylesheet" type="text/css" href="/style/css/diagram.css">
 		<link rel = "stylesheet" type="text/css" href="/style/css/bootstrap.min.css">
@@ -51,10 +51,10 @@
 							<li class = "item">
 							<a ng-href="symbol/{{ item.symbol+'?type='+type }}">
 							<div class="symbol-id floating-box">{{ item.symbol }}</div>
-							<div class= "symbol-acc floating-box">{{ item.test_mae.toFixed(2)|| ""}}</div>
-							<div class= "symbol-acc floating-box">{{ item.test_accuracy?((item.test_accuracy*100).toFixed(2)+"%"): ""}}</div>
-							<div class="symbol-id floating-box">{{ item.data.predict||'' }}</div>
-							<div class="symbol-profit floating-box">{{ item.profit? (item.profit*100).toFixed(2)+"%":'' }}</div>
+							<div class= "symbol-acc floating-box">{{ item.test_mae? "Score: "+item.test_mae.toFixed(2): ""}}</div>
+							<div class= "symbol-acc floating-box">{{ item.test_accuracy?("Accuracy:"+(item.test_accuracy*100).toFixed(2)+"%"): ""}}</div>
+							<div class="symbol-id floating-box">{{ item.data.predict?tab[item.data.predict]:'' }}</div>
+							<div class="symbol-profit floating-box">{{ item.profit? "Profit: "+(item.profit*100).toFixed(2)+"%":'' }}</div>
 							</a></li>
 							
 						</ul>

@@ -4,6 +4,9 @@ var _color= {
 	default: "#4499ff"
 };
 
+var _testArea= "#ccffee";
+var _profitColor = ["#bbffbb","#ffbbbb"];
+
 var _color_multi = {
 	red:["#ff8e8b","#ff4b45","#ff0800","#ba0600","#8c0500","#5d0300"],
 	green:["#17ff5f","#00d142","#008c2c","#004616"],
@@ -69,6 +72,7 @@ var Diagram  = function(selector,input_data, type){
 	    height = +svg.attr("height") - margin.top - margin.bottom, //big diagram
 	    height2 = +svg.attr("height") - margin2.top - margin2.bottom; // small image
 
+	this.svg = svg;
 	//set scales for big diagram
 	var x = d3.scaleTime().range([0, width]),
 		y = d3.scaleLinear().range([height, 0]),
@@ -269,6 +273,17 @@ var Diagram  = function(selector,input_data, type){
 	}
 }
 
+Diagram.prototype.addSampler = function() {
+	var samplerX = this.svg.attr("width")/4*3;
+	var samplerY = this.svg.attr("hight")/3;
+	var samplerW = this.svg.attr("width")/5;
+	var samplerH = this.svg.attr("hight")/3;
+
+	this.svg.select(".focus")
+				.append("g")
+				.attr("transform", "translate(" + samplerX + "," + samplerY + ")")
+				.append("rect").attr("width","2").attr("height","2")
+};
 
 
 

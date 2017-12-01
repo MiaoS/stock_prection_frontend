@@ -45,7 +45,7 @@ router.get("",function(req,res){
 		            {$limit: 5}
   				],
     			function(err,docs){
-    			console.log(docs.length);
+//    			console.log(docs.length);
     			if(err){
     				var emptydoc = [];
     				res.json({status:500,message:err});
@@ -56,7 +56,7 @@ router.get("",function(req,res){
     					if(option.type=="binary"){
 	    					if(!docs[i].data[10].test_accuracy){
 	    						ProfitCal_binary.cal_test_accuracy(docs[i]);
-								console.log(docs[i]);
+//								console.log(docs[i]);
 	    					}
 	    					if(!docs[i].profit){
 	    						ProfitCal_binary.cal_profit(docs[i]);
@@ -87,7 +87,8 @@ router.get("",function(req,res){
 	    					}
 	    					
 	    					docs[i].data[0].test_mae = docs[i].test_mae||docs[i].mae;
-	    					console.log("cal:"+i);
+							docs[i].data[0].test_start_date = docs[i].test_start_date;
+//	    					console.log("cal:"+i);
 	    					
 	    					docs[i].data[0].predictResult = multi_result[docs[i].data[0].predict];
 	    				}

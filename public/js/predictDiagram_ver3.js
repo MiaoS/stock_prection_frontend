@@ -1,8 +1,11 @@
 var _testArea= "#eee0cb";// light redish grey
 var _profitColor = ["#baa898","#839788","#000000","#556699"]; //deep redish grey, deep blue-ish grey, color for profit line , color for fill prfit area
 
-var _predictResult = ["#2fe50f","#bcff08","#ffd10c","#ff6f08","#ff1200"];//green to red
+var _predictResultColor = ["#2fe50f","#bcff08","#ffd10c","#ff6f08","#ff1200"];//green to red
 var _closeLineColor ="#4499ff";
+var _outputColor = _profitColor[1];
+var _predictColor =  _predictResultColor[3];
+var _accuracyColor = "#ee9999";
 
 var Diagram = function(selector,predict,symbol){
 	this.diagramArea = d3.select(selector);
@@ -57,8 +60,19 @@ var Diagram = function(selector,predict,symbol){
 	this.profitLine;
 	this.dataPath = "/predict?symbol="+symbol+"&predictDay="+predict+"&type="+TYPE;
 	this.predictDay=predict;
-	this.iconArea;
+	this.iconArea = this.svg.append("g").attr("class","icon-area");
+	this.iconX = this.margin.left*2.5;
+	this.iconY = 100;
 
+}
+
+Diagram.prototype.addIcon=function(className,outlineColor,fillingColor,descr){
+	this.iconArea.append("circle")
+			.attr("cx",this.iconX).attr("cy",this.iconY).attr("r","8")
+			.attr("stroke",outlineColor).attr("stroke-width","2").attr("fill", fillingColor);
+	this.iconArea.append("text").attr("x",this.iconX+20).attr("y",this.iconY+4).style("font-size",".8em")
+		.text(descr);
+	this.iconY -= 20;
 }
 
 Diagram.prototype.drawClosePrice = function() {
@@ -98,6 +112,8 @@ Diagram.prototype.drawClosePrice = function() {
 				.style("text-anchor", "start")
 				.attr("class","close-price-layer")
 				.text("Close Price");
+	
+	this.addIcon("color-price-layer",_closeLineColor, "none","Close Price");
 
 };
 
@@ -125,11 +141,11 @@ Diagram.prototype.drawAccuracy = function(model) {
 
 	// draw the line
 	figure.append("path").attr("class"," accuracy-line")
-					.datum(curdata).attr("stroke","#ee9999").attr("stroke-width",3).attr("d", accuracyLine).attr("fill","none");
+					.datum(curdata).attr("stroke", _accuracyColor ).attr("stroke-width",3).attr("d", accuracyLine).attr("fill","none");
 
 	//draw  Y axis for accuracy
 	if(!model){
-		this.accYAxis = d3.axisRight(y);// for jquery to troggle this class 
+		this.accYAxis = d3.axisRight(y).tickFormat(function(d){return (d*100).toFixed(2)+"%"});// for jquery to troggle this class 
 		this.mainArea.append("g")
 			  .attr("class", "axis axis--y accuracy-layer acc-y").attr("transform", "translate(" + this.width + ",0)")
 			  .call(this.accYAxis);
@@ -138,11 +154,13 @@ Diagram.prototype.drawAccuracy = function(model) {
 		this.svg.append("text")
 				.attr("transform", "rotate(-90)")
 				.attr("x", -110 )
-				.attr("y", this.svg.attr("width")-this.margin2.right)
+				.attr("y", this.svg.attr("width"))
 	 			.attr("font-size", ".8em")
 				.style("text-anchor", "start")
 				.attr("class","accuracy-layer")
-				.text("Test Acc");
+				.text("Test Acc %");
+		
+		this.addIcon("accuracy-layer", _accuracyColor , "none","Acc %");
 	}
 
 };
@@ -150,7 +168,7 @@ Diagram.prototype.drawAccuracy = function(model) {
 Diagram.prototype.drawProfit = function() {
 	var temp = this;
 	this.profitY.domain([d3.min(temp.data,function(d){return d.profit;}),d3.max(temp.data,function(d){return d.profit;})]);
-	this.profitYAxis = d3.axisRight(temp.profitY);
+	this.profitYAxis = d3.axisRight(temp.profitY).tickFormat(function(d){return (d*100).toFixed(2)+"%"});
 
 	//draw figure;
 	this.profitLine = d3.area()
@@ -170,7 +188,17 @@ Diagram.prototype.drawProfit = function() {
 	this.mainArea.append("g")
 			  .attr("class", "axis axis--y profit-layer profit-y").attr("transform", "translate(0,0)")
 			  .call(temp.profitYAxis);
-
+	
+	this.svg.append("text")
+		.attr("transform", "rotate(-90)")
+		.attr("x", -110 )
+		.attr("y", this.margin.left+this.margin.right)
+		.attr("font-size", ".8em")
+		.style("text-anchor", "start")
+		.attr("class","profit-layer")
+		.text("Profit %");
+	
+ 	this.addIcon("profit-layer", _profitColor[2] , _profitColor[3],"Profit %");
 };
 
 Diagram.prototype.drawMae = function(model) {
@@ -197,25 +225,31 @@ Diagram.prototype.drawMae = function(model) {
 					.x(function(d){return x(new Date(d.date));})
 					.y(function(d){return y(d.output||0);});
 	// draw the line
-	figure.datum(curdata).append("path").attr("class"," mae-predict-line")
-					.attr("stroke",_predictResult[1]).attr("stroke-width",3).attr("d", this.predictMultiLine);
+
 	figure.datum(curdata).append("path").attr("class"," mae-output-line")
-					.attr("stroke",_predictResult[4]).attr("stroke-width",3).attr("d", this.outputMultiLine);
+					.attr("stroke", _outputColor ).attr("stroke-width",3).attr("d", this.outputMultiLine);
+	figure.datum(curdata).append("path").attr("class"," mae-predict-line")
+					.attr("stroke",_predictColor ).attr("stroke-width",3).attr("d", this.predictMultiLine);
 
 	//draw  Y axis for accuracy
 	if(!model){
-		this.accYAxis = d3.axisRight(y);// for jquery to troggle this class 
+		this.accYAxis = d3.axisRight(y).tickFormat(function(d){
+			var labels =[">10%","5%~10%","2%~5%","0~2%","-2%~0","-5%~-2%","-10%~-5%","<-10%"];
+			return labels[d];
+		});// for jquery to troggle this class 
 		this.mainArea.append("g")
 			  .attr("class", "axis axis--y mae-layer").attr("transform", "translate(" + this.width + ",0)")
 			  .call(this.accYAxis);
 		this.svg.append("text")
-			.attr("transform", "rotate(-90)")
-			.attr("x", -110 )
-			.attr("y", this.svg.attr("width")-this.margin2.right)
+			//.attr("transform", "rotate(-90)")
+			.attr("x", this.svg.attr("width")-this.margin.right*2 )
+			.attr("y", 10)
 			.attr("font-size", ".8em")
 			.style("text-anchor", "start")
 			.attr("class","accuracy-layer")
-			.text("Mae");
+			.text("Change %/"+this.predictDay+" days");
+		this.addIcon("mae-layer mae-output-line", _outputColor , "none","Actual Change %");
+		this.addIcon("mae-layer mae-predict-line", _predictColor , "none","Predict Change %");
 	}
 
 

@@ -73,6 +73,8 @@ router.get("",function(req,res){
 	    						docs[i].data[0].test_accuracy = docs[i].test_accuracy;
 	    						console.log("cal:"+i);
 	    					}
+							docs[i].data[0].test_start_date = docs[i].test_start_date;
+							
 	    				}else{
 	    					if(!docs[i].profit){
 	    						ProfitCal_multi.cal_profit(docs[i]);

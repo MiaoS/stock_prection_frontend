@@ -412,8 +412,20 @@ Diagram.prototype.populateData = function() {
 		temp.drawZoom();
 		temp.selectionOperaton();
 		/////---------
+		updateTabFields(temp);
+
+
+    });
+	return this;
+};
+
+var updateTabFields= function(temp,data){
+	if(!data){
+		data = temp.data;
+	}
+	
 		if(TYPE == "binary"){
-			$("#acc"+temp.predictDay).html((temp.data[0].test_accuracy*100).toFixed(2)+"%");
+			$("#acc"+temp.predictDay).html((data[0].test_accuracy*100).toFixed(2)+"%");
 			var label;
 			if(temp.data[0].predict=="Rise"){
 				label = "label-success";
@@ -421,31 +433,36 @@ Diagram.prototype.populateData = function() {
 				label = "label-danger";
 			}
 			$("#pre_res_"+temp.predictDay).addClass(label);
-			$("#pre_res_"+temp.predictDay).html(temp.data[0].predict);//.addClass(label);
-			$("#profit"+temp.predictDay).html((temp.data[0].profit*100).toFixed(2)+"%");
-			$("#cpm"+temp.predictDay).html((temp.data[0].max_rise*100).toFixed(2)+"%");
-			if(temp.data[0].predict == "Rise"){
+			$("#pre_res_"+temp.predictDay).html(data[0].predict);//.addClass(label);
+			$("#profit"+temp.predictDay).html((data[0].profit*100).toFixed(2)+"%");
+			$("#cpm"+temp.predictDay).html((data[0].max_rise*100).toFixed(2)+"%");
+			if(data[0].predict == "Rise"){
 				$("#op"+temp.predictDay).html("Buy");
 			}else{
 				$("#op"+temp.predictDay).html("Sell");
 			}
 
-			$("#cp"+temp.predictDay).html((temp.data[0].rise*100).toFixed(2)+"%");
+			$("#cp"+temp.predictDay).html((data[0].rise*100).toFixed(2)+"%");
+			console.table(data[0]);
+			$("#tsd"+temp.predictDay).html(data[0].test_start_date.substring(0,10));
+			
 		}else{
 		
 			$("span.accuName").html("Test_MAE: ");
-			$("#acc"+temp.predictDay).html((temp.data[0].test_mae).toFixed(2));
+			$("#acc"+temp.predictDay).html((data[0].test_mae).toFixed(2));
 			var label;
-			if(data.predict<4){
+			if(data[0].predict<4){
 				label = "label-success";
 			}else{
 				label = "label-danger";
 			}
 			$("#pre_res_"+temp.predictDay).addClass(label);
-			$("#pre_res_"+temp.predictDay).html(temp.data[0].predictResult);//.addClass(label);
-			$("#profit"+temp.predictDay).html((temp.data[0].profit*100).toFixed(2)+"%");
-			$("#cp"+temp.predictDay).html((temp.data[0].rise*100).toFixed(2)+"%");
-			$("#cpm"+temp.predictDay).html((temp.data[0].max_rise*100).toFixed(2)+"%");
+			$("#pre_res_"+temp.predictDay).html(data[0].predictResult);//.addClass(label);
+			$("#profit"+temp.predictDay).html((data[0].profit*100).toFixed(2)+"%");
+			$("#cp"+temp.predictDay).html((data[0].rise*100).toFixed(2)+"%");
+			$("#cpm"+temp.predictDay).html((data[0].max_rise*100).toFixed(2)+"%");
+			
+			$("#tsd"+temp.predictDay).html(data[0].test_start_date.substring(0,10));
 
 			if(temp.data[0].predict <=2 ){
 				$("#op"+temp.predictDay).html("All In");
@@ -456,10 +473,7 @@ Diagram.prototype.populateData = function() {
 			}
 		}
 
-
-    });
-	return this;
-};
+}
 
 var updateDiagram = function(data,obj){
 	obj.data = data;
@@ -484,7 +498,7 @@ var updateDiagram = function(data,obj){
 
 	//update axises
 	obj.mainArea.select(".price-close-x").call(obj.xAxis);
-
+	
 	
 }
 
@@ -501,12 +515,16 @@ Diagram.prototype.selectionOperaton=function(){
 				selector.classed("selected",true);
 				if(selector.attr("id")== "dt-sampler"){
 					updateDiagram(temp.dtData,temp);
+					updateTabFields(temp,temp.dtData);
 				}else if(selector.attr("id")== "ann-sampler"){
 					updateDiagram(temp.annData,temp);
+					updateTabFields(temp,temp.annData);
 				}else if(selector.attr("id")== "rf-sampler"){
 					updateDiagram(temp.rfData,temp);
+					updateTabFields(temp,temp.rfData);
 				}else{
 					updateDiagram(temp.svmData,temp);
+					updateTabFields(temp,temp.svmData);
 				}
 			});
 }

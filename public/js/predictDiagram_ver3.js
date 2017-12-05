@@ -370,20 +370,24 @@ Diagram.prototype.populateData = function() {
 
     	
     	if(TYPE == "binary"){
-    		temp.svmData= data[0];   	
-	    	temp.annData=data[1];	    	
-	    	temp.rfData = data[2];
+			temp.dtData = data[0]; //DT
+    		temp.svmData= data[1]; // SVM
+	    	temp.annData=data[2];  // ann
+	    	temp.rfData = data[3];  // rf
 
-    		if(temp.svmData[0].test_accuracy>=temp.annData[0].test_accuracy && temp.svmData[0].test_accuracy>=temp.rfData[0].test_accuracy){
+    		if(temp.svmData[0].test_accuracy>=temp.annData[0].test_accuracy && temp.svmData[0].test_accuracy>=temp.rfData[0].test_accuracy && temp.svmData[0].test_accuracy >= temp.dtData[0].test_accuracy){
     			temp.data= temp.svmData;
     			temp.samplerArea.select("#svm-sampler").classed("selected",true);
-    		}else if(temp.annData[0].test_accuracy>=temp.svmData[0].test_accuracy && temp.annData[0].test_accuracy>=temp.rfData[0].test_accuracy){
+    		}else if(temp.annData[0].test_accuracy>=temp.svmData[0].test_accuracy && temp.annData[0].test_accuracy>=temp.rfData[0].test_accuracy && temp.annData[0].test_accuracy >= temp.dtData[0].test_accuracy){
     			temp.data= temp.annData;
     			temp.samplerArea.select("#ann-sampler").classed("selected",true);
-    		}else if(temp.rfData[0].test_accuracy>=temp.annData[0].test_accuracy && temp.rfData[0].test_accuracy>=temp.svmData[0].test_accuracy){
+    		}else if(temp.rfData[0].test_accuracy>=temp.annData[0].test_accuracy && temp.rfData[0].test_accuracy>=temp.svmData[0].test_accuracy && temp.rfData[0].test_accuracy >= temp.dtData[0].test_accuracy){
     			temp.data= temp.rfData;
     			temp.samplerArea.select("#rf-sampler").classed("selected",true);
-    		}
+    		}else{
+				temp.data= temp.dtData;
+    			temp.samplerArea.select("#dt-sampler").classed("selected",true);
+			}
     	}else{
 	    	temp.annData=data[0];	    	
 	    	temp.rfData = data[1];
@@ -399,7 +403,7 @@ Diagram.prototype.populateData = function() {
     		temp.drawAccuracy("svm");
     		temp.drawAccuracy("ann");
     		temp.drawAccuracy("rf");
-    		//temp.drawAccuracy("dt");
+    		temp.drawAccuracy("dt");
 			temp.drawAccuracy();
     	}else{
 

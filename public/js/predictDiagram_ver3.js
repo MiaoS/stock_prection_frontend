@@ -122,7 +122,7 @@ Diagram.prototype.drawAccuracy = function(model) {
 	if(model){
 		figure = this.samplerArea.select("#"+model+"-sampler").select("svg");//.append("g").attr("transform", "translate(0,0)");
 		curdata = this[model+"Data"];
-		console.table(this);
+		//console.table(this);
 		x = d3.scaleTime().range([0,figure.attr("width")]);
 		y = d3.scaleLinear().range([figure.attr("height"),0]);
 
@@ -447,7 +447,7 @@ var updateTabFields= function(temp,data){
 			}
 
 			$("#cp"+temp.predictDay).html((data[0].rise*100).toFixed(2)+"%");
-			console.table(data[0]);
+			//console.table(data[0]);
 			$("#tsd"+temp.predictDay).html(data[0].test_start_date.substring(0,10));
 			
 		}else{

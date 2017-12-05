@@ -37,7 +37,7 @@ function cal_test_accuracy(stock) {
     
     while (i >= 0) {
         
-        if ((undefined === stock.data[i].predict_result) || (null === stock.data[i].output)) {
+        if ((undefined === stock.data[i].predict_result) || (null === stock.data[i].output) || (null === stock.data[i].predict_result)) {
 
         } else {
             if (stock.data[i].predict_result) {

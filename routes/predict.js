@@ -59,6 +59,7 @@ router.get("",function(req,res){
 //								console.log(docs[i]);
 	    					}
 	    					if(!docs[i].profit){
+								console.log("profit:"+i);
 	    						ProfitCal_binary.cal_profit(docs[i]);
 	    						ProfitCal_binary.cal_daily_profit(docs[i]);
 	    					}

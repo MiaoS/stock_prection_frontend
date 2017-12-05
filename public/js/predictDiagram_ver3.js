@@ -496,6 +496,7 @@ var updateDiagram = function(data,obj){
 	  	obj.mainArea.select(".mae-predict-line").datum(data).attr("d",obj.predictMultiLine);
 	  }
 	 if(obj.profitLine){
+		console.table(data);
 		obj.mainArea.select(".profit-layer").select("path").datum(data).attr("d",obj.profitLine);
 		obj.mainArea.select(".profit-y").call(obj.profitYAxis);
 	}

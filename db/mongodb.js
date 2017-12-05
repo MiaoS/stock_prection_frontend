@@ -1,7 +1,7 @@
 "use strict";
 
 var MongoClient = require('mongodb').MongoClient,
-    mongoURL = "mongodb://172.31.24.49:27017/frontend",
+    mongoURL = "mongodb://54.196.55.209:27017/frontend",
    // col_name = "symbols",
     db;
 

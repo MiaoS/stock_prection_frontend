@@ -77,7 +77,18 @@ function cal_profit(stock) {
     
     while (i > 0) {
         
-        
+        if (undefined === stock.data[i].predict) {
+            if (stock.data[i].predict_result) {
+                stock.data[i].predict = stock.data[i].output;
+            } else {
+                if ("Rise" === stock.data[i].output) {
+                    stock.data[i].predict = "Fall";
+                } else {
+                    stock.data[i].predict = "Rise";
+                }
+            }
+                
+        }
         if (stock.data[i].predict === "Rise") { stock.data[i].operation = "hold"; }
         if (stock.data[i].predict === "Fall") { stock.data[i].operation = "wait"; }
         

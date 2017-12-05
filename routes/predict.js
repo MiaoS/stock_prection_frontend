@@ -16,10 +16,11 @@ router.get("",function(req,res){
 	option.symbol = req.query.symbol.toUpperCase();
 	option.predict_days = parseInt(req.query.predictDay);
 	
+	
 	option.type = req.query.type;
 	if(option.type)
 	option.project = {
-		data: {$slice: ["$data", 500]}, 
+		data: {$slice: ["$data", 550]}, 
 		model: 1, 
 		predict_days: 1,
 		test_start_date:1,
@@ -51,7 +52,7 @@ router.get("",function(req,res){
     				res.json({status:500,message:err});
     			}else{
     				var dataonly = [];
-
+					console.log(option.predict_days);
     				for (var i = docs.length - 1; i >= 0; i--) {
     					if(option.type=="binary"){
 	    					if(!docs[i].data[10].test_accuracy){

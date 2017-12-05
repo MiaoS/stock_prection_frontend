@@ -70,6 +70,8 @@ function cal_profit(stock) {
     while (true) {
         
         if (/*stock.data[i].date === stock.test_start_date*/isSampleDate(stock.data[i].date,stock.test_start_date)) {
+			console.log(stock.data[i].date);
+			console.log(stock.test_start_date);
             break;
         }
         i = i + 1;

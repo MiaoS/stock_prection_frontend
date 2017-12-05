@@ -62,6 +62,7 @@ router.get("",function(req,res){
 								console.log("profit:"+i);
 	    						ProfitCal_binary.cal_profit(docs[i]);
 	    						ProfitCal_binary.cal_daily_profit(docs[i]);
+								console.log(docs[i].profit);
 	    					}
 	    					if(!docs[i].rise){
 	    						docs[i].data[0].rise =ProfitCal_binary.cal_rise(docs[i]);

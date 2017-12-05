@@ -429,6 +429,8 @@ var updateTabFields= function(temp,data){
 	}
 	
 		if(TYPE == "binary"){
+			console.log(data[0].profit);
+			
 			$("#acc"+temp.predictDay).html((data[0].test_accuracy*100).toFixed(2)+"%");
 			var label;
 			if(temp.data[0].predict=="Rise"){
@@ -496,7 +498,7 @@ var updateDiagram = function(data,obj){
 	  	obj.mainArea.select(".mae-predict-line").datum(data).attr("d",obj.predictMultiLine);
 	  }
 	 if(obj.profitLine){
-		console.table(data);
+		//console.table(data);
 		obj.mainArea.select(".profit-layer").select("path").datum(data).attr("d",obj.profitLine);
 		obj.mainArea.select(".profit-y").call(obj.profitYAxis);
 	}
@@ -565,7 +567,4 @@ $("input[name='close_prices']").on("change",function(){
 	$(this).parents('.diagram-controler').siblings("svg").find(".area").toggle();
 })
 
-// $("input[name='predictResult']").on("change",function(){
-// 	$(this).parents('.diagram-controler').siblings("svg").children("g.focus").children("circle").toggle();
-// })
 

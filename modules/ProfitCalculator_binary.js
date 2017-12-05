@@ -168,7 +168,9 @@ function cal_daily_profit(stock) {
     }
     
     while (i >= 0) {
-        
+        if(!stock.data[i + 1]){
+			console.log("data index:"+(i+1));
+		}
         if ('sell' === stock.data[i + 1].operation) {
             rate = (stock.data[i].open - price) / price;
             money = money * (1 + rate);

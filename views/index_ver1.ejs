@@ -53,8 +53,10 @@
 							<div class="symbol-id floating-box">{{ item.symbol }}</div>
 							<div class= "symbol-acc floating-box">{{ item.test_mae? "Score: "+item.test_mae.toFixed(2): ""}}</div>
 							<div class= "symbol-acc floating-box">{{ item.test_accuracy?("Accuracy:"+(item.test_accuracy*100).toFixed(2)+"%"): ""}}</div>
-							<div class="symbol-id floating-box">{{ item.data.predict?tab[item.data.predict]:'' }}</div>
+							<div class="symbol-id floating-box">{{ item.predict?tab[item.predict]:'' }}</div>
+							<!--
 							<div class="symbol-profit floating-box">{{ item.profit? "Profit: "+(item.profit*100).toFixed(2)+"%":'' }}</div>
+							-->
 							</a></li>
 							
 						</ul>

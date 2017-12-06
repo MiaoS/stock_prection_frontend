@@ -134,8 +134,7 @@ Diagram.prototype.drawAccuracy = function(model) {
 	}
 	
 	if(curdata.length ==0){
-		console.log(figure.attr("class"));
-		console.log(d3.select(figure.node().parentNode).attr("class"))
+		console.log(d3.select(d3.select(figure.node().parentNode).node().parentNode).attr("class"))
 		d3.select(figure.node().parentNode).remove();
 		return;
 	}
@@ -221,6 +220,14 @@ Diagram.prototype.drawMae = function(model) {
 		x = this.mainX;
 		y = this.accY;
 	}
+	if(curdata.length==0){
+		//console.log(figure.attr("class"));
+		console.log(d3.select(d3.select(figure.node().parentNode).node().parentNode).attr("class"))
+		d3.select(d3.select(figure.node().parentNode).node().parentNode).remove();
+		return;
+	}
+	
+	
 	x.domain(d3.extent(curdata,function(d){return new Date(d.date);}));
 	y.domain([0,7]);
 
@@ -407,7 +414,7 @@ Diagram.prototype.populateData = function() {
     	}else{
 	    	temp.annData=data[0];	    	
 	    	temp.rfData = data[1];
-	    	if(temp.annData[0].test_mae <= temp.rfData[0].test_mae){
+	    	if(temp.annData.length!=0&& (temp.rfData.length ==0 ||temp.annData[0].test_mae <= temp.rfData[0].test_mae)){
 	    		temp.data = temp.annData;
 				temp.samplerArea.select("#ann-sampler").classed("selected",true);
 	    	}else{

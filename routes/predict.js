@@ -10,7 +10,7 @@ var dbCol = "predictResults";
 var multi_result = [">+10%","+5~10%","+2~5%","+0~2%","-0~2%","-2~5%","-5~10%","<-10%"];
 var multi_result_2 = [">+5%","+3~5%","+1~3%","+0~1%","-0~2%","-2~5%","-5~10%","<-10%"];
 var mimiHashSet =["DT","SVM","ann","rf"];
-
+var mimiHashSetM =["ann","rf"];
 
 router.get("",function(req,res){
 	var option ={};
@@ -56,10 +56,19 @@ router.get("",function(req,res){
 					console.log(option.predict_days);
     				for (var i = 0, modelI = 0; modelI <mimiHashSet.length; modelI++) {
 						if(option.type=="multi"){
-							i = modelI;
-							if(i == docs.length){
+							if(modelI == mimiHashSetM.length){
 								break;
 							}
+							
+							console.log(i+"\t"+docs[i].model +"\t"+mimiHashSetM[modelI])
+							
+							if(docs[i].model!= mimiHashSetM[modelI]){
+								dataonly.push([]);
+								continue;
+							}
+							
+							
+
 							if(!docs[i].profit){
 	    						ProfitCal_multi.cal_profit(docs[i]);
 	    						ProfitCal_multi.cal_daily_profit(docs[i]);

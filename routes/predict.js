@@ -112,7 +112,7 @@ router.get("",function(req,res){
     					dataonly.push(docs[i].data);
 						i++;
     				}
-    				console.log(dataonly[0][0]);
+    				//sconsole.log(dataonly[0][0]);
     				res.json(dataonly);  				
     			}
     		});

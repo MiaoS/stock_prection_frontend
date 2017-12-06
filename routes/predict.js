@@ -43,7 +43,7 @@ router.get("",function(req,res){
     			[
 		            {$project: option.project},
 		            {$match: {type: option.type, predict_days: option.predict_days,symbol:option.symbol}},
-		            {$sort: {model: 1}}, //SVM,ann, dt, rf
+		            {$sort: {model: 1}}, //DT,SVM,ann, rf
 		            {$limit: 5}
   				],
     			function(err,docs){
@@ -57,7 +57,7 @@ router.get("",function(req,res){
     				for (var i = 0, modelI = 0; modelI <mimiHashSet.length; modelI++) {
 						if(option.type=="multi"){
 							i = modelI;
-							if(i = docs.length){
+							if(i == docs.length){
 								break;
 							}
 							if(!docs[i].profit){
@@ -112,7 +112,7 @@ router.get("",function(req,res){
     					dataonly.push(docs[i].data);
 						i++;
     				}
-    				//sconsole.log(dataonly[0][0]);
+    				//console.log(dataonly[0][0]);
     				res.json(dataonly);  				
     			}
     		});

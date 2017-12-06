@@ -407,7 +407,7 @@ Diagram.prototype.populateData = function() {
     	}else{
 	    	temp.annData=data[0];	    	
 	    	temp.rfData = data[1];
-	    	if(temp.annData[0].mae <= temp.rfData[0].mae){
+	    	if(temp.annData[0].test_mae <= temp.rfData[0].test_mae){
 	    		temp.data = temp.annData;
 				temp.samplerArea.select("#ann-sampler").classed("selected",true);
 	    	}else{

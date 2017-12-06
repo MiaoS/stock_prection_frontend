@@ -132,6 +132,13 @@ Diagram.prototype.drawAccuracy = function(model) {
 		x = this.mainX;
 		y = this.accY;
 	}
+	
+	if(curdata.length ==0){
+		console.log(figure.attr("class"));
+		console.log(d3.select(figure.node().parentNode).attr("class"))
+		d3.select(figure.node().parentNode).remove();
+		return;
+	}
 	x.domain(d3.extent(curdata,function(d){return new Date(d.date);}));
 	y.domain([0,1.1]);
 
@@ -375,13 +382,22 @@ Diagram.prototype.populateData = function() {
 	    	temp.annData=data[2];  // ann
 	    	temp.rfData = data[3];  // rf
 
-    		if(temp.svmData[0].test_accuracy>=temp.annData[0].test_accuracy && temp.svmData[0].test_accuracy>=temp.rfData[0].test_accuracy && temp.svmData[0].test_accuracy >= temp.dtData[0].test_accuracy){
+    		if(temp.svmData.length!=0 
+			   && (temp.annData.length ==0 || temp.svmData[0].test_accuracy>=temp.annData[0].test_accuracy) 
+			   && (temp.rfData.length ==0 || temp.svmData[0].test_accuracy>=temp.rfData[0].test_accuracy) 
+			   && (temp.dtData.length ==0 || temp.svmData[0].test_accuracy >= temp.dtData[0].test_accuracy)){
     			temp.data= temp.svmData;
     			temp.samplerArea.select("#svm-sampler").classed("selected",true);
-    		}else if(temp.annData[0].test_accuracy>=temp.svmData[0].test_accuracy && temp.annData[0].test_accuracy>=temp.rfData[0].test_accuracy && temp.annData[0].test_accuracy >= temp.dtData[0].test_accuracy){
+    		}else if(temp.annData.length!=0
+					 && (temp.svmData.length==0||temp.annData[0].test_accuracy>=temp.svmData[0].test_accuracy) 
+					 && (temp.rfData.length ==0 || temp.annData[0].test_accuracy>=temp.rfData[0].test_accuracy )
+					 && (temp.dtData.length ==0 ||temp.annData[0].test_accuracy >= temp.dtData[0].test_accuracy)){
     			temp.data= temp.annData;
     			temp.samplerArea.select("#ann-sampler").classed("selected",true);
-    		}else if(temp.rfData[0].test_accuracy>=temp.annData[0].test_accuracy && temp.rfData[0].test_accuracy>=temp.svmData[0].test_accuracy && temp.rfData[0].test_accuracy >= temp.dtData[0].test_accuracy){
+    		}else if(temp.rfData.length!=0
+					 && (temp.annData.length ==0||temp.rfData[0].test_accuracy>=temp.annData[0].test_accuracy) 
+					 && (temp.svmData.length==0||temp.rfData[0].test_accuracy>=temp.svmData[0].test_accuracy )
+					 && (temp.dtData.length==0||temp.rfData[0].test_accuracy >= temp.dtData[0].test_accuracy)){
     			temp.data= temp.rfData;
     			temp.samplerArea.select("#rf-sampler").classed("selected",true);
     		}else{
@@ -406,7 +422,6 @@ Diagram.prototype.populateData = function() {
     		temp.drawAccuracy("dt");
 			temp.drawAccuracy();
     	}else{
-
     		temp.drawMae("ann");
     		temp.drawMae("rf");
     		temp.drawMae();

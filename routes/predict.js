@@ -9,6 +9,7 @@ var ProfitCal_multi = require("../modules/ProfitCalcucator_multi");
 var dbCol = "predictResults";
 var multi_result = [">+10%","+5~10%","+2~5%","+0~2%","-0~2%","-2~5%","-5~10%","<-10%"];
 var multi_result_2 = [">+5%","+3~5%","+1~3%","+0~1%","-0~2%","-2~5%","-5~10%","<-10%"];
+var mimiHashSet =["DT","SVM","ann","rf"];
 
 
 router.get("",function(req,res){
@@ -42,7 +43,7 @@ router.get("",function(req,res){
     			[
 		            {$project: option.project},
 		            {$match: {type: option.type, predict_days: option.predict_days,symbol:option.symbol}},
-		            {$sort: {model: -1}}, //SVM,ann, dt, rf
+		            {$sort: {model: 1}}, //SVM,ann, dt, rf
 		            {$limit: 5}
   				],
     			function(err,docs){
@@ -53,8 +54,37 @@ router.get("",function(req,res){
     			}else{
     				var dataonly = [];
 					console.log(option.predict_days);
-    				for (var i = docs.length - 1; i >= 0; i--) {
-    					if(option.type=="binary"){
+    				for (var i = 0, modelI = 0; modelI <mimiHashSet.length; modelI++) {
+						if(option.type=="multi"){
+							i = modelI;
+							if(i = docs.length){
+								break;
+							}
+							if(!docs[i].profit){
+	    						ProfitCal_multi.cal_profit(docs[i]);
+	    						ProfitCal_multi.cal_daily_profit(docs[i]);
+	    					}
+	    					if(!docs[i].rise){
+	    						docs[i].data[0].rise =ProfitCal_multi.cal_rise(docs[i]);
+	    						docs[i].data[0].max_rise =ProfitCal_multi.cal_max_rise(docs[i]);
+	    					}else{
+	    						docs[i].data[0].rise =docs[i].rise;
+	    						docs[i].data[0].max_rise = docs[i].max_rise;
+	    					}
+	    					
+	    					docs[i].data[0].test_mae = docs[i].test_mae||docs[i].mae;
+							docs[i].data[0].test_start_date = docs[i].test_start_date;
+//	    					console.log("cal:"+i);
+	    					
+	    					docs[i].data[0].predictResult = multi_result[docs[i].data[0].predict];
+						}else{
+							console.log(docs[i].model +"\t"+mimiHashSet[modelI])
+							if(docs[i].model!= mimiHashSet[modelI]){
+								dataonly.push([]);
+								continue;
+							}
+							
+							
 	    					if(!docs[i].data[10].test_accuracy){
 	    						ProfitCal_binary.cal_test_accuracy(docs[i]);
 //								console.log(docs[i]);
@@ -78,26 +108,9 @@ router.get("",function(req,res){
 	    					}
 							docs[i].data[0].test_start_date = docs[i].test_start_date;
 							
-	    				}else{
-	    					if(!docs[i].profit){
-	    						ProfitCal_multi.cal_profit(docs[i]);
-	    						ProfitCal_multi.cal_daily_profit(docs[i]);
-	    					}
-	    					if(!docs[i].rise){
-	    						docs[i].data[0].rise =ProfitCal_multi.cal_rise(docs[i]);
-	    						docs[i].data[0].max_rise =ProfitCal_multi.cal_max_rise(docs[i]);
-	    					}else{
-	    						docs[i].data[0].rise =docs[i].rise;
-	    						docs[i].data[0].max_rise = docs[i].max_rise;
-	    					}
-	    					
-	    					docs[i].data[0].test_mae = docs[i].test_mae||docs[i].mae;
-							docs[i].data[0].test_start_date = docs[i].test_start_date;
-//	    					console.log("cal:"+i);
-	    					
-	    					docs[i].data[0].predictResult = multi_result[docs[i].data[0].predict];
 	    				}
     					dataonly.push(docs[i].data);
+						i++;
     				}
     				console.log(dataonly[0][0]);
     				res.json(dataonly);  				

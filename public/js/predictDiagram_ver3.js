@@ -191,7 +191,7 @@ Diagram.prototype.drawProfit = function() {
 			.datum(temp.data.filter(function(d){return d.profit;}))
 			.attr("d",this.profitLine)
 			.attr("stroke",_profitColor[2])
-			.attr("stroke-width",3)
+			.attr("stroke-width",0)
 			.attr("fill",_profitColor[3]).attr("opacity",0.8);
 
 	//draw axisY
@@ -210,7 +210,7 @@ Diagram.prototype.drawProfit = function() {
 		.attr("stroke","black")
 		.text("Profit %");
 	
- 	this.addIcon("profit-layer", _profitColor[2] , _profitColor[3],"Profit %");
+ 	this.addIcon("profit-layer", "none" , _profitColor[3],"Profit %");
 };
 
 Diagram.prototype.drawMae = function(model) {
@@ -595,7 +595,7 @@ $("input[name='profit']").on("change",function(){
 })
 
 $("input[name='close_prices']").on("change",function(){
-	$(this).parents('.diagram-controler').siblings("svg").find(".area").toggle();
+	$(this).parents('.diagram-controler').siblings("svg").find(".close-price-layer").toggle();
 })
 
 

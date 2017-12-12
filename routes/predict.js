@@ -197,8 +197,9 @@ router.get('/search',function(req,res,next){
 			console.log(err);
 			res.json({status:500,message:JSON.stringify(err)});
 		}else{
-			if(item==null){
-				res.json({status:304,message:"symbol has not been found"});
+			
+			if(item === null){
+				res.json({status:304,message:"Symbol "+req.query.symbol+" has not been found in database."});
 			}else{
 				console.log(item);
 				res.json({status:200, symbol:item.symbol});

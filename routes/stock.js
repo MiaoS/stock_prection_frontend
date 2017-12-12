@@ -12,7 +12,7 @@ router.get('/:symbol', function(req, res, next) {
   	if(err){
   		res.json(err);
   	}else{
-      item.type =req.query.type||"binary";
+      item.type = sreq.query.type||"binary";
       if(item.type=="binary"){
   		  res.render("stock",item);
       }else{

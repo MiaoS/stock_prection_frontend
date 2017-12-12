@@ -12,7 +12,7 @@ var Diagram = function(selector,predict,symbol){
 	//main figure svg
 	this.svg = this.diagramArea.select(".show-area");
 	//
-	this.margin = {top: 40, right: 60, bottom: 110, left: 60};
+	this.margin = {top: 40, right: 100, bottom: 110, left: 40};
 	this.margin2 ={top: 430, right: 20, bottom: 30, left: 20};
 	this.width =this.svg.attr("width") - this.margin.left - this.margin.right;
 	this.height = this.svg.attr("height") - this.margin.top - this.margin.bottom;
@@ -109,6 +109,8 @@ Diagram.prototype.drawClosePrice = function() {
 				.attr("x", -110 )
 				.attr("y", 20)
 	 			.attr("font-size", ".8em")
+				.attr("fill","white")
+				.attr("stroke","black")
 				.style("text-anchor", "start")
 				.attr("class","close-price-layer")
 				.text("Close Price");
@@ -121,14 +123,14 @@ Diagram.prototype.drawAccuracy = function(model) {
 	var figure,curdata,x,y,accuracyLine;
 	if(model){
 		figure = this.samplerArea.select("#"+model+"-sampler").select("svg");//.append("g").attr("transform", "translate(0,0)");
-		curdata = this[model+"Data"];
+		curdata = this[model+"Data"].filter(function(d){return d.test_accuracy;});
 		//console.table(this);
 		x = d3.scaleTime().range([0,figure.attr("width")]);
 		y = d3.scaleLinear().range([figure.attr("height"),0]);
 
 	}else{
 		figure = this.mainArea.append("g").attr("class","accuracy-layer");// for jquery to troggle this class 
-		curdata = this.data;
+		curdata = this.data.filter(function(d){return d.test_accuracy;});
 		x = this.mainX;
 		y = this.accY;
 	}
@@ -147,21 +149,23 @@ Diagram.prototype.drawAccuracy = function(model) {
 
 	// draw the line
 	figure.append("path").attr("class"," accuracy-line")
-					.datum(curdata).attr("stroke", _accuracyColor ).attr("stroke-width",3).attr("d", accuracyLine).attr("fill","none");
+					.datum(curdata.filter(function(d){return d.test_accuracy;})).attr("stroke", _accuracyColor ).attr("stroke-width",3).attr("d", accuracyLine).attr("fill","none");
 
 	//draw  Y axis for accuracy
 	if(!model){
-		this.accYAxis = d3.axisRight(y).tickFormat(function(d){return (d*100).toFixed(2)+"%"});// for jquery to troggle this class 
+		this.accYAxis = d3.axisLeft(y).tickFormat(function(d){return (d*100).toFixed(0)+"%"});// for jquery to troggle this class 
 		this.mainArea.append("g")
-			  .attr("class", "axis axis--y accuracy-layer acc-y").attr("transform", "translate(" + this.width + ",0)")
+			  .attr("class", "axis axis--y accuracy-layer acc-y").attr("transform", "translate(" + (this.width+this.margin.left) + ",0)")
 			  .call(this.accYAxis);
 		this.accuracyLine = accuracyLine;
 		
 		this.svg.append("text")
 				.attr("transform", "rotate(-90)")
 				.attr("x", -110 )
-				.attr("y", this.svg.attr("width"))
+				.attr("y", this.svg.attr("width")-this.margin.right+5)//
 	 			.attr("font-size", ".8em")
+				.attr("fill","white")
+				.attr("stroke","black")
 				.style("text-anchor", "start")
 				.attr("class","accuracy-layer")
 				.text("Test Acc %");
@@ -179,12 +183,12 @@ Diagram.prototype.drawProfit = function() {
 	//draw figure;
 	this.profitLine = d3.area()
 						.x(function(d){return temp.mainX(new Date(d.date));})
-						.y1(function(d){return temp.profitY(d.profit||0);})
-						.y0(temp.profitY(0));
+						.y1(function(d){return temp.profitY(d.profit);})
+						.y0(function(d){return temp.profitY(0);});
 
 	var profitArea = this.mainArea.append("g").attr("class","profit-layer");
 	profitArea.append("path")
-			.datum(temp.data)
+			.datum(temp.data.filter(function(d){return d.profit;}))
 			.attr("d",this.profitLine)
 			.attr("stroke",_profitColor[2])
 			.attr("stroke-width",3)
@@ -192,16 +196,18 @@ Diagram.prototype.drawProfit = function() {
 
 	//draw axisY
 	this.mainArea.append("g")
-			  .attr("class", "axis axis--y profit-layer profit-y").attr("transform", "translate(0,0)")
+			  .attr("class", "axis axis--y profit-layer profit-y").attr("transform", "translate("+(this.width+this.margin.left)+",0)")
 			  .call(temp.profitYAxis);
 	
 	this.svg.append("text")
 		.attr("transform", "rotate(-90)")
 		.attr("x", -110 )
-		.attr("y", this.margin.left+this.margin.right)
+		.attr("y", this.width+this.margin.right+this.margin.left)
 		.attr("font-size", ".8em")
 		.style("text-anchor", "start")
 		.attr("class","profit-layer")
+		.attr("fill","white")
+		.attr("stroke","black")
 		.text("Profit %");
 	
  	this.addIcon("profit-layer", _profitColor[2] , _profitColor[3],"Profit %");
@@ -211,12 +217,12 @@ Diagram.prototype.drawMae = function(model) {
 	var figure,curdata,x,y;
 	if(model){
 		figure = this.samplerArea.select("#"+model+"-sampler").select("svg").append("g");
-		curdata = this[model+"Data"];
+		curdata = this[model+"Data"].filter(function(d){return d.predict;});
 		x = d3.scaleTime().range([0,this.diagramArea.select(".model-selector").select("#"+model+"-sampler").select("svg").attr("width")]);
 		y = d3.scaleLinear().range([this.diagramArea.select(".model-selector").select("#"+model+"-sampler").select("svg").attr("height"),0]);
 	}else{
 		figure = this.mainArea.append("g").attr("class","mae-layer");
-		curdata = this.data;
+		curdata = this.data.filter(function(d){return d.predict||d.output;});
 		x = this.mainX;
 		y = this.accY;
 	}
@@ -233,34 +239,36 @@ Diagram.prototype.drawMae = function(model) {
 
 	this.predictMultiLine = d3.line()
 					.x(function(d){return x(new Date(d.date));})
-					.y(function(d){return y(d.predict||0);});
+					.y(function(d){return y(7-d.predict);});
 
 	this.outputMultiLine = d3.line()
 					.x(function(d){return x(new Date(d.date));})
-					.y(function(d){return y(d.output||0);});
+					.y(function(d){return y(7-d.output);});
 	// draw the line
-
-	figure.datum(curdata).append("path").attr("class"," mae-output-line")
-					.attr("stroke", _outputColor ).attr("stroke-width",3).attr("d", this.outputMultiLine);
+	
+	figure.datum(curdata.filter(function(d){return d.output;})).append("path").attr("class"," mae-output-line")
+					.attr("stroke", _outputColor ).attr("fill","none").attr("stroke-width",3).attr("d", this.outputMultiLine);
 	figure.datum(curdata).append("path").attr("class"," mae-predict-line")
-					.attr("stroke",_predictColor ).attr("stroke-width",3).attr("d", this.predictMultiLine);
+					.attr("stroke",_predictColor ).attr("fill","none").attr("stroke-width",3).attr("d", this.predictMultiLine);
 
 	//draw  Y axis for accuracy
 	if(!model){
-		this.accYAxis = d3.axisRight(y).tickFormat(function(d){
-			var labels =[">10%","5%~10%","2%~5%","0~2%","-2%~0","-5%~-2%","-10%~-5%","<-10%"];
-			return labels[d];
+		this.accYAxis = d3.axisLeft(y).tickFormat(function(d){
+			var labels =[">10%","5~10%","2~5%","0~2%","-2~0%","-5~-2%","-10~-5%","<-10%"];
+			return labels[7-d];
 		});// for jquery to troggle this class 
 		this.mainArea.append("g")
-			  .attr("class", "axis axis--y mae-layer").attr("transform", "translate(" + this.width + ",0)")
+			  .attr("class", "axis axis--y mae-layer").attr("transform", "translate(" + (this.width+this.margin.left) + ",0)")
 			  .call(this.accYAxis);
 		this.svg.append("text")
 			//.attr("transform", "rotate(-90)")
-			.attr("x", this.svg.attr("width")-this.margin.right*2 )
-			.attr("y", 10)
+			.attr("x", this.width)
+			.attr("y", this.margin.top/2)
 			.attr("font-size", ".8em")
 			.style("text-anchor", "start")
 			.attr("class","accuracy-layer")
+			.attr("fill","white")
+			.attr("stroke","black")
 			.text("Change %/"+this.predictDay+" days");
 		this.addIcon("mae-layer mae-output-line", _outputColor , "none","Actual Change %");
 		this.addIcon("mae-layer mae-predict-line", _predictColor , "none","Predict Change %");
@@ -480,11 +488,11 @@ var updateTabFields= function(temp,data){
 			$("#acc"+temp.predictDay).html((data[0].test_mae).toFixed(2));
 			var label;
 			if(data[0].predict<4){
-				label = "label-success";
+				label = "label label-success";
 			}else{
-				label = "label-danger";
+				label = "label label-danger";
 			}
-			$("#pre_res_"+temp.predictDay).addClass(label);
+			$("#pre_res_"+temp.predictDay).attr("class",label);
 			$("#pre_res_"+temp.predictDay).html(data[0].predictResult);//.addClass(label);
 			$("#profit"+temp.predictDay).html((data[0].profit*100).toFixed(2)+"%");
 			$("#cp"+temp.predictDay).html((data[0].rise*100).toFixed(2)+"%");
@@ -512,16 +520,17 @@ var updateDiagram = function(data,obj){
 	obj.mainArea.select(".area").attr("d", obj.closeLine); // big figure
 	//sconsole.log(obj.closeLine)
 	 if(obj.accuracyLine){
-	  	obj.mainArea.select(".accuracy-line").datum(data).attr("d",obj.accuracyLine);
+	  	obj.mainArea.select(".accuracy-line").datum(data.filter(function(d){return d.test_accuracy;})).attr("d",obj.accuracyLine);
 	  	obj.mainArea.select(".acc-y").call(obj.accYAxis);
 	  }
 	 if(obj.outputMultiLine){
-	  	obj.mainArea.select(".mae-output-line").datum(data).attr("d",obj.outputMultiLine);
-	  	obj.mainArea.select(".mae-predict-line").datum(data).attr("d",obj.predictMultiLine);
+	  	obj.mainArea.select(".mae-output-line").datum(data.filter(function(d){return d.output;})).attr("d",obj.outputMultiLine);
+	  	obj.mainArea.select(".mae-predict-line").datum(data.filter(function(d){return d.predict;})).attr("d",obj.predictMultiLine);
 	  }
 	 if(obj.profitLine){
 		//console.table(data);
-		obj.mainArea.select(".profit-layer").select("path").datum(data).attr("d",obj.profitLine);
+		//obj.profitY.domain([d3.min(data,function(d){return d.profit||0;}),d3.max(data,function(d){return d.profit||0;})]);
+		obj.mainArea.select(".profit-layer").select("path").datum(data.filter(function(d){return d.profit;})).attr("d",obj.profitLine);
 		obj.mainArea.select(".profit-y").call(obj.profitYAxis);
 	}
 

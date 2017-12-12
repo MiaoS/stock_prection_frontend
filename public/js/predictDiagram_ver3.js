@@ -456,11 +456,11 @@ var updateTabFields= function(temp,data){
 			$("#acc"+temp.predictDay).html((data[0].test_accuracy*100).toFixed(2)+"%");
 			var label;
 			if(temp.data[0].predict=="Rise"){
-				label = "label-success";
+				label = "label label-success";
 			}else{
-				label = "label-danger";
+				label = "label label-danger";
 			}
-			$("#pre_res_"+temp.predictDay).addClass(label);
+			$("#pre_res_"+temp.predictDay).attr("class",label);
 			$("#pre_res_"+temp.predictDay).html(data[0].predict);//.addClass(label);
 			$("#profit"+temp.predictDay).html((data[0].profit*100).toFixed(2)+"%");
 			$("#cpm"+temp.predictDay).html((data[0].max_rise*100).toFixed(2)+"%");
